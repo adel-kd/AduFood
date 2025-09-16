@@ -1,5 +1,8 @@
-import express from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
+
+
+import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -12,8 +15,8 @@ import foodRoutes from './routes/foodroutes.js';
 import orderRoutes from './routes/orderroutes.js';
 import reviewRoutes from './routes/reviewroutes.js';
 import userRoutes from './routes/userRoutes.js';
+import mockTransactionRoute from './routes/mockTransactionRoutes.js';
 
-dotenv.config();
 const app = express();
 
 // ======= MIDDLEWARE ======= //
@@ -33,9 +36,10 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/users', userRoutes);
 
+app.use('/api/transactions',mockTransactionRoute);
 
 app.get('/', (req, res) => {
-  res.send('🍔 Food Delivery API is running...');
+  res.send(' Food Delivery API is running...');
 });
 
 // ======= CONNECT TO DB AND START SERVER ======= //
@@ -54,3 +58,20 @@ mongoose.connect(process.env.MONGO_URI, {
 .catch((err) => {
   console.error('❌ MongoDB connection failed:', err.message);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

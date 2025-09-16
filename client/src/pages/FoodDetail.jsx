@@ -1,8 +1,11 @@
+// FoodDetail.jsx
 import React, { useState, useEffect, useContext } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getFood, createReview } from '../api/food'
-import { addToCart } from '../api/cart'
+
+import { getFood } from '../api/food'
+import { addToCart as addToCartApi } from '../api/cart'
 import { addFavorite, removeFavorite } from '../api/favorite'
+import { addReview, updateReview, deleteReview, getReviews } from '../api/review'
 import { AuthContext } from '../contexts/authcontext'
 import { CartContext } from '../contexts/cartcontext'
 
@@ -11,17 +14,24 @@ export default function FoodDetail() {
   const navigate = useNavigate()
   const { user } = useContext(AuthContext)
   const { addItemToCart } = useContext(CartContext)
-  
+
   const [food, setFood] = useState(null)
+  const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [isFavorite, setIsFavorite] = useState(false)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [showReviewForm, setShowReviewForm] = useState(false)
-  const [reviewForm, setReviewForm] = useState({ rating: 0, comment: '' })
-  const [imageError, setImageError] = useState(false)
+  const [reviewForm, setReviewForm] = useState({ 
+    rating: 0, 
+    comment: '', 
+    showName: true // Default to showing name
+  })
+  const [editingReviewId, setEditingReviewId] = useState(null)
 
   useEffect(() => {
     fetchFood()
+    fetchReviews()
+    // eslint-disable-next-line
   }, [id])
 
   const fetchFood = async () => {
@@ -37,15 +47,24 @@ export default function FoodDetail() {
     }
   }
 
+  const fetchReviews = async () => {
+    try {
+      const res = await getReviews(id)
+      setReviews(res.data.reviews || [])
+    } catch (error) {
+      console.error('Error fetching reviews:', error)
+      setReviews([])
+    }
+  }
+
   const handleAddToCart = async () => {
     if (!user) {
       alert('Please login to add items to cart')
       return
     }
-    
     setIsAddingToCart(true)
     try {
-      await addToCart({ foodId: food._id, quantity: 1 })
+      await addToCartApi({ foodId: food._id, quantity: 1 })
       addItemToCart(food, 1)
     } catch (error) {
       console.error('Error adding to cart:', error)
@@ -55,23 +74,12 @@ export default function FoodDetail() {
     }
   }
 
-  const handleFavorite = async () => {
+  const handleFavorite = () => {
     if (!user) {
       alert('Please login to add favorites')
       return
     }
-
-    try {
-      if (isFavorite) {
-        await removeFavorite(food._id)
-        setIsFavorite(false)
-      } else {
-        await addFavorite(food._id)
-        setIsFavorite(true)
-      }
-    } catch (error) {
-      console.error('Error updating favorite:', error)
-    }
+    setIsFavorite(!isFavorite)
   }
 
   const handleSubmitReview = async (e) => {
@@ -80,62 +88,101 @@ export default function FoodDetail() {
       alert('Please login to write a review')
       return
     }
+    if (!reviewForm.rating || !reviewForm.comment) {
+      alert('Please provide rating and comment')
+      return
+    }
 
     try {
-      await createReview(id, reviewForm)
-      setReviewForm({ rating: 0, comment: '' })
+      if (editingReviewId) {
+        // Update existing review
+        await updateReview(editingReviewId, { 
+          rating: reviewForm.rating, 
+          comment: reviewForm.comment,
+          showName: reviewForm.showName
+        })
+      } else {
+        // Create new review
+        await addReview({ 
+          foodId: id, 
+          rating: reviewForm.rating, 
+          comment: reviewForm.comment,
+          showName: reviewForm.showName
+        })
+      }
+      
+      setReviewForm({ rating: 0, comment: '', showName: true })
       setShowReviewForm(false)
-      fetchFood() // Refresh food data to show new review
+      setEditingReviewId(null)
+      fetchFood() // Refresh food data to get updated rating
+      fetchReviews() // Refresh reviews list
     } catch (error) {
       console.error('Error submitting review:', error)
-      alert('Failed to submit review')
+      alert(error.response?.data?.message || 'Failed to submit review')
     }
+  }
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm('Are you sure you want to delete your review?')) return
+    try {
+      await deleteReview(reviewId)
+      setShowReviewForm(false)
+      setReviewForm({ rating: 0, comment: '', showName: true })
+      setEditingReviewId(null)
+      fetchFood() // Refresh food data to get updated rating
+      fetchReviews() // Refresh reviews list
+    } catch (error) {
+      console.error('Error deleting review:', error)
+      alert('Failed to delete review')
+    }
+  }
+
+  const handleEditReview = (review) => {
+    setReviewForm({ 
+      rating: review.rating, 
+      comment: review.comment,
+      showName: review.showName !== undefined ? review.showName : true
+    })
+    setEditingReviewId(review._id)
+    setShowReviewForm(true)
+  }
+
+  const handleCancelReview = () => {
+    setReviewForm({ rating: 0, comment: '', showName: true })
+    setEditingReviewId(null)
+    setShowReviewForm(false)
   }
 
   const renderStars = (rating) => {
     const stars = []
     const fullStars = Math.floor(rating)
-    const hasHalfStar = rating % 1 !== 0
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(
-        <span key={i} className="text-yellow-400">★</span>
-      )
+      stars.push(<span key={i} style={{ color: '#dd804f' }}>★</span>)
     }
 
-    if (hasHalfStar) {
-      stars.push(
-        <span key="half" className="text-yellow-400">☆</span>
-      )
-    }
-
-    const emptyStars = 5 - Math.ceil(rating)
+    const emptyStars = 5 - fullStars
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(
-        <span key={`empty-${i}`} className="text-gray-600">★</span>
-      )
+      stars.push(<span key={`empty-${i}`} className="text-gray-300">★</span>)
     }
-
     return stars
   }
 
-  const getDefaultImage = (category) => {
-    const images = {
-      burger: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=400&fit=crop&auto=format',
-      pizza: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=400&fit=crop&auto=format',
-      ethiopian: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop&auto=format',
-      drinks: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&h=400&fit=crop&auto=format',
-      dessert: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=600&h=400&fit=crop&auto=format'
-    }
-    return images[category] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop&auto=format'
+  const handleImageError = (e) => {
+    e.target.src = '/image-not-found.png'
+    e.target.onerror = null // Prevent infinite loop
+    e.target.className = 'w-full h-96 object-contain rounded-xl bg-gray-100 p-8'
   }
 
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto">
         <div className="text-center py-16">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-          <p className="mt-4 text-gray-300 text-lg">Loading food details...</p>
+          <div 
+            className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-t-transparent"
+            style={{ borderColor: '#dd804f' }}
+          ></div>
+          <p className="mt-4 text-lg text-gray-600">Loading food details...</p>
         </div>
       </div>
     )
@@ -143,107 +190,90 @@ export default function FoodDetail() {
 
   if (!food) {
     return (
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center py-16">
-          <div className="text-6xl mb-4">🍽️</div>
-          <h3 className="text-2xl font-semibold text-gray-100 mb-2">Food not found</h3>
-          <p className="text-gray-400">The food item you're looking for doesn't exist.</p>
-        </div>
+      <div className="max-w-7xl mx-auto text-center py-16 bg-white rounded-xl">
+        <div className="text-6xl mb-4">🍽️</div>
+        <h3 className="text-2xl font-semibold mb-2" style={{ color: '#dd804f' }}>Food not found</h3>
+        <p className="text-gray-600">The food item you're looking for doesn't exist.</p>
       </div>
     )
   }
 
+  const userReview = reviews.find(r => r.user?._id === user?._id)
+
   return (
-    <div className="max-w-7xl mx-auto">
-      {/* Back Button */}
+    <div className="max-w-7xl mx-auto px-4 bg-white min-h-screen py-6">
       <button
         onClick={() => navigate(-1)}
-        className="mb-6 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+        className="mb-6 flex items-center gap-2 transition-colors hover:opacity-80"
+        style={{ color: '#dd804f' }}
       >
-        <span>←</span>
-        Back
+        ← Back
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Image Section */}
         <div className="space-y-4">
-          <div className="relative">
-            {imageError ? (
-              <div className="w-full h-96 bg-gray-700 rounded-xl flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">🍽️</div>
-                  <p className="text-gray-400">Image not available</p>
-                </div>
-              </div>
-            ) : (
-              <img
-                src={food.image || getDefaultImage(food.category)}
-                alt={food.name}
-                className="w-full h-96 object-cover rounded-xl"
-                onError={() => setImageError(true)}
-              />
-            )}
-            
-            {/* Category Badge */}
+          <div className="relative rounded-xl overflow-hidden">
+            <img
+              src={food.image}
+              alt={food.name}
+              className="w-full h-96 object-cover rounded-xl"
+              onError={handleImageError}
+            />
             <div className="absolute top-4 left-4">
-              <span className="bg-primary-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+              <span
+                className="px-3 py-1 rounded-full text-sm font-medium"
+                style={{ background: '#dd804f', color: '#fff' }}
+              >
                 {food.category || 'Food'}
               </span>
             </div>
 
-            {/* Favorite Button */}
             <button
               onClick={handleFavorite}
-              className="absolute top-4 right-4 p-3 bg-gray-800/90 rounded-full hover:bg-gray-700/90 transition-colors"
+              className="absolute top-4 right-4 p-3 rounded-full transition-colors bg-black/20 backdrop-blur-sm hover:bg-black/30"
+              style={{ border: '2px solid #dd804f' }}
             >
-              <span className={`text-xl ${isFavorite ? 'text-red-500' : 'text-gray-400'}`}>
+              <span className="text-xl text-white">
                 {isFavorite ? '❤️' : '🤍'}
               </span>
             </button>
           </div>
         </div>
 
-        {/* Details Section */}
         <div className="space-y-6">
-          <div>
-            <h1 className="text-4xl font-display font-bold text-white mb-4">{food.name}</h1>
-            <p className="text-gray-300 text-lg leading-relaxed">{food.description}</p>
-          </div>
+          <h1 className="text-4xl font-bold text-gray-900">{food.name}</h1>
+          <p className="text-lg leading-relaxed text-gray-700">{food.description}</p>
 
-          {/* Rating */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="flex">
-                {renderStars(food.rating || 0)}
-              </div>
-              <span className="text-gray-400">
-                {food.rating || 0} ({food.numReviews || 0} reviews)
-              </span>
+              <div className="flex">{renderStars(food.rating || 0)}</div>
+              <span className="text-gray-600">{food.rating?.toFixed(1) || 0} ({food.numReviews || 0} reviews)</span>
             </div>
           </div>
 
-          {/* Price */}
           <div className="flex items-center gap-2">
-            <span className="text-4xl font-bold text-primary-400">{food.price}</span>
-            <span className="text-gray-400 text-lg">ETB</span>
+            <span className="text-4xl font-bold" style={{ color: '#dd804f' }}>{food.price}</span>
+            <span className="text-lg text-gray-600">ETB</span>
           </div>
 
-          {/* Add to Cart Button */}
           <button
             onClick={handleAddToCart}
             disabled={isAddingToCart}
-            className="w-full bg-primary-500 hover:bg-primary-600 text-white py-4 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-lg"
+            className="w-full py-4 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-lg text-white"
+            style={{ 
+              background: isAddingToCart ? '#b96a3e' : '#dd804f',
+              hover: { background: '#c9723c' }
+            }}
           >
             {isAddingToCart ? (
               <>
-                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div 
+                  className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"
+                ></div>
                 Adding to Cart...
               </>
             ) : (
-              <>
-                <span>🛒</span>
-                Add to Cart
-              </>
+              <>🛒 Add to Cart</>
             )}
           </button>
         </div>
@@ -251,59 +281,103 @@ export default function FoodDetail() {
 
       {/* Reviews Section */}
       <div className="mt-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-display font-bold text-white">Reviews & Ratings</h2>
-          {user && (
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
+          <h2 className="text-2xl font-bold text-gray-900">Reviews & Ratings</h2>
+
+          {/* Show Write Review button only if user exists and hasn't reviewed yet */}
+          {user && !userReview && (
             <button
-              onClick={() => setShowReviewForm(!showReviewForm)}
-              className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              onClick={() => setShowReviewForm(true)}
+              className="px-4 py-2 rounded-lg font-medium text-white transition-colors hover:opacity-90"
+              style={{ background: '#dd804f' }}
             >
               Write a Review
             </button>
+          )}
+
+          {/* If user has a review, show Edit and Delete buttons here */}
+          {user && userReview && !showReviewForm && (
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleEditReview(userReview)}
+                className="px-4 py-2 rounded-lg font-medium text-white transition-colors hover:opacity-90"
+                style={{ background: '#dd804f' }}
+              >
+                Edit Review
+              </button>
+              <button
+                onClick={() => handleDeleteReview(userReview._id)}
+                className="px-4 py-2 rounded-lg font-medium text-white transition-colors hover:opacity-90"
+                style={{ background: '#666' }}
+              >
+                Delete Review
+              </button>
+            </div>
           )}
         </div>
 
         {/* Review Form */}
         {showReviewForm && (
-          <div className="bg-gray-800 rounded-xl shadow-adu p-6 mb-6 border border-gray-700">
-            <h3 className="text-lg font-semibold text-white mb-4">Write a Review</h3>
+          <div 
+            className="rounded-xl p-6 mb-6 border"
+            style={{ background: '#fef7f3', borderColor: '#dd804f' }}
+          >
+            <h3 className="text-lg font-semibold mb-4 text-gray-900">
+              {editingReviewId ? 'Edit Your Review' : 'Write a Review'}
+            </h3>
             <form onSubmit={handleSubmitReview} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Rating</label>
+                <label className="block text-sm font-medium mb-2 text-gray-700">Rating</label>
                 <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
+                  {[1,2,3,4,5].map(star => (
                     <button
                       key={star}
                       type="button"
                       onClick={() => setReviewForm({ ...reviewForm, rating: star })}
-                      className={`text-2xl ${star <= reviewForm.rating ? 'text-yellow-400' : 'text-gray-600'}`}
-                    >
-                      ★
-                    </button>
+                      className="text-2xl transition-transform hover:scale-110"
+                      style={{ color: star <= reviewForm.rating ? '#dd804f' : '#d1d5db' }}
+                    >★</button>
                   ))}
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Comment</label>
+                <label className="block text-sm font-medium mb-2 text-gray-700">Comment</label>
                 <textarea
                   value={reviewForm.comment}
                   onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
-                  className="w-full p-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-700 text-white placeholder-gray-400"
+                  className="w-full p-3 rounded-lg border focus:outline-none focus:ring-2 bg-white text-gray-900"
+                  style={{ borderColor: '#dd804f', focusRingColor: '#dd804f' }}
                   placeholder="Share your experience..."
                   rows="4"
+                  required
                 />
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="showName"
+                  checked={reviewForm.showName}
+                  onChange={(e) => setReviewForm({ ...reviewForm, showName: e.target.checked })}
+                  className="rounded border-gray-300"
+                  style={{ accentColor: '#dd804f' }}
+                />
+                <label htmlFor="showName" className="text-sm text-gray-700">
+                  Show my name with this review
+                </label>
               </div>
               <div className="flex gap-3">
                 <button
                   type="submit"
-                  className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                  className="px-6 py-2 rounded-lg font-medium text-white transition-colors hover:opacity-90"
+                  style={{ background: '#dd804f' }}
                 >
-                  Submit Review
+                  {editingReviewId ? 'Update Review' : 'Submit Review'}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowReviewForm(false)}
-                  className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                  onClick={handleCancelReview}
+                  className="px-6 py-2 rounded-lg font-medium text-white transition-colors hover:opacity-90"
+                  style={{ background: '#666' }}
                 >
                   Cancel
                 </button>
@@ -314,34 +388,42 @@ export default function FoodDetail() {
 
         {/* Reviews List */}
         <div className="space-y-4">
-          {food.reviews && food.reviews.length > 0 ? (
-            food.reviews.map((review) => (
-              <div key={review._id} className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+          {reviews.length > 0 ? (
+            reviews.map(review => (
+              <div
+                key={review._id}
+                className="rounded-xl p-6 border relative"
+                style={{ background: '#fef7f3', borderColor: '#dd804f' }}
+              >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center">
-                      <span className="text-white font-medium">
-                        {review.user?.name?.charAt(0) || 'U'}
+                    <div 
+                      className="w-10 h-10 rounded-full flex items-center justify-center"
+                      style={{ background: '#dd804f' }}
+                    >
+                      <span className="font-medium text-white">
+                        {review.showName ? (review.user?.name?.charAt(0) || 'U') : 'A'}
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium text-white">{review.user?.name || 'Anonymous'}</p>
-                      <div className="flex">
-                        {renderStars(review.rating)}
-                      </div>
+                      <p className="font-medium text-gray-900">
+                        {review.showName ? (review.user?.name || 'User') : 'Anonymous'}
+                      </p>
+                      <div className="flex">{renderStars(review.rating)}</div>
                     </div>
                   </div>
-                  <span className="text-gray-400 text-sm">
-                    {new Date(review.createdAt).toLocaleDateString()}
-                  </span>
+                  <span className="text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</span>
                 </div>
-                <p className="text-gray-300">{review.comment}</p>
+                <p className="text-gray-700">{review.comment}</p>
               </div>
             ))
           ) : (
-            <div className="text-center py-8">
+            <div 
+              className="text-center py-8 rounded-xl border"
+              style={{ background: '#fef7f3', borderColor: '#dd804f' }}
+            >
               <div className="text-4xl mb-4">⭐</div>
-              <p className="text-gray-400">No reviews yet. Be the first to review this food!</p>
+              <p className="text-gray-600">No reviews yet. Be the first to review this food!</p>
             </div>
           )}
         </div>

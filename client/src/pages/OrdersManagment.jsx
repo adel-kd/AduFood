@@ -1,3 +1,4 @@
+// src/pages/OrdersManagement.jsx
 import React, { useEffect, useState } from 'react'
 import { getAllOrders, updateOrderStatus, filterOrders } from '../api/order'
 
@@ -9,6 +10,7 @@ export default function OrdersManagement() {
 
   useEffect(() => {
     fetchOrders()
+    // eslint-disable-next-line
   }, [statusFilter])
 
   const fetchOrders = async () => {
@@ -22,7 +24,7 @@ export default function OrdersManagement() {
       }
       setOrders(response.data)
     } catch (error) {
-      console.error('Error fetching orders:', error)
+      alert('Failed to fetch orders: ' + (error.response?.data?.message || error.message))
     } finally {
       setLoading(false)
     }
@@ -37,23 +39,25 @@ export default function OrdersManagement() {
       ))
       alert('Order status updated successfully!')
     } catch (error) {
-      console.error('Error updating order status:', error)
-      alert('Failed to update order status')
+      alert('Failed to update order status: ' + (error.response?.data?.message || error.message))
     } finally {
       setUpdatingStatus(null)
     }
   }
 
+  // Only use orange for focus and button, red for delete/cancelled
   const getStatusColor = (status) => {
     switch (status) {
       case 'Pending':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'bg-gray-200 text-black font-bold'
       case 'Confirmed':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-black text-white font-bold'
       case 'Delivered':
-        return 'bg-accent-100 text-accent-800'
+        return 'bg-gray-200 text-black font-bold'
+      case 'Cancelled':
+        return 'bg-red-100 text-[#e3342f] font-bold'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'bg-gray-100 text-black font-bold'
     }
   }
 
@@ -65,6 +69,8 @@ export default function OrdersManagement() {
         return '✅'
       case 'Delivered':
         return '🚚'
+      case 'Cancelled':
+        return '❌'
       default:
         return '📦'
     }
@@ -95,8 +101,8 @@ export default function OrdersManagement() {
     return (
       <div className="max-w-7xl mx-auto">
         <div className="text-center py-16">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-          <p className="mt-4 text-gray-600 text-lg">Loading orders...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#dd804f' }}></div>
+          <p className="mt-4 text-lg" style={{ color: '#dd804f' }}>Loading orders...</p>
         </div>
       </div>
     )
@@ -107,46 +113,51 @@ export default function OrdersManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-display font-bold text-gray-900">Orders Management</h1>
-          <p className="text-gray-600 mt-2">Manage and track all customer orders</p>
+          <h1 className="text-2xl font-bold mb-6" style={{ color: '#dd804f' }}> Manage Order </h1>
+          <p className="mt-2" style={{ color: '#fff' }}>Manage and track all customer orders</p>
         </div>
         <div className="mt-4 sm:mt-0">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="p-3 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-[#dd804f]"
+            style={{
+              color: '#fff',
+              background: '#181818'
+            }}
           >
-            <option value="all">All Orders</option>
-            <option value="Pending">Pending</option>
-            <option value="Confirmed">Confirmed</option>
-            <option value="Delivered">Delivered</option>
+            <option value="all" style={{ color: '#fff' }}>All Orders</option>
+            <option value="Pending" style={{ color: '#fff' }}>Pending</option>
+            <option value="Confirmed" style={{ color: '#fff' }}>Confirmed</option>
+            <option value="Delivered" style={{ color: '#fff' }}>Delivered</option>
+            <option value="Cancelled" style={{ color: '#fff' }}>Cancelled</option>
           </select>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-ethiopian p-6 text-center">
-          <div className="text-3xl font-bold text-primary-500 mb-2">{orders.length}</div>
-          <p className="text-gray-600">Total Orders</p>
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-10 mb-10">
+        <div className="rounded-xl shadow-ethiopian p-6 text-center" style={{ background: '#181818' }}>
+          <div className="text-3xl font-bold mb-2" style={{ color: '#fff' }}>{orders.length}</div>
+          <p style={{ color: '#fff' }}>Total Orders</p>
         </div>
-        <div className="bg-white rounded-xl shadow-ethiopian p-6 text-center">
-          <div className="text-3xl font-bold text-yellow-500 mb-2">
+        <div className="rounded-xl shadow-ethiopian p-6 text-center" style={{ background: '#181818' }}>
+          <div className="text-3xl font-bold mb-2" style={{ color: '#fff' }}>
             {orders.filter(o => o.status === 'Pending').length}
           </div>
-          <p className="text-gray-600">Pending</p>
+          <p style={{ color: '#fff' }}>Pending</p>
         </div>
-        <div className="bg-white rounded-xl shadow-ethiopian p-6 text-center">
-          <div className="text-3xl font-bold text-blue-500 mb-2">
+        <div className="rounded-xl shadow-ethiopian p-6 text-center" style={{ background: '#181818' }}>
+          <div className="text-3xl font-bold mb-2" style={{ color: '#fff' }}>
             {orders.filter(o => o.status === 'Confirmed').length}
           </div>
-          <p className="text-gray-600">Confirmed</p>
+          <p style={{ color: '#fff' }}>Confirmed</p>
         </div>
-        <div className="bg-white rounded-xl shadow-ethiopian p-6 text-center">
-          <div className="text-3xl font-bold text-accent-500 mb-2">
+        <div className="rounded-xl shadow-ethiopian p-6 text-center" style={{ background: '#181818' }}>
+          <div className="text-3xl font-bold mb-2" style={{ color: '#fff' }}>
             {orders.filter(o => o.status === 'Delivered').length}
           </div>
-          <p className="text-gray-600">Delivered</p>
+          <p style={{ color: '#fff' }}>Delivered</p>
         </div>
       </div>
 
@@ -154,20 +165,33 @@ export default function OrdersManagement() {
       <div className="space-y-6">
         {orders.length > 0 ? (
           orders.map((order) => (
-            <div key={order._id} className="bg-white rounded-xl shadow-ethiopian overflow-hidden">
+            <div key={order._id} className="rounded-xl shadow-ethiopian overflow-hidden" style={{ background: '#222' }}>
               {/* Order Header */}
-              <div className="bg-gradient-to-r from-primary-50 to-secondary-50 p-6 border-b">
+              <div className="p-6 border-b-0" style={{ background: '#181818' }}>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">Order #{order._id.slice(-8)}</h3>
-                    <p className="text-gray-600 text-sm">Placed on {formatDate(order.createdAt)}</p>
-                    <p className="text-gray-600 text-sm">Customer: {order.user?.name || order.user?.email || 'Unknown'}</p>
+                    <h3 className="text-lg font-semibold" style={{ color: '#fff' }}>Order #{order._id.slice(-8)}</h3>
+                    <p className="text-sm" style={{ color: '#888' }}>Placed on {formatDate(order.createdAt)}</p>
+                    <p className="text-sm" style={{ color: '#fff' }}>Customer: <span style={{ color: '#fff', fontWeight: 600 }}>{order.user?.name || order.user?.email || 'Unknown'}</span></p>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}
+                      style={
+                        order.status === 'Confirmed'
+                          ? { background: '#000', color: '#fff' }
+                          : order.status === 'Delivered'
+                          ? { background: '#eee', color: '#222' }
+                          : order.status === 'Pending'
+                          ? { background: '#eee', color: '#222' }
+                          : order.status === 'Cancelled'
+                          ? { background: '#e3342f22', color: '#e3342f' }
+                          : { background: '#fff', color: '#222' }
+                      }
+                    >
                       {getStatusIcon(order.status)} {order.status}
                     </span>
-                    <span className="text-xl font-bold text-primary-500">
+                    <span className="text-xl font-bold" style={{ color: '#dd804f' }}>
                       {order.totalPrice} ETB
                     </span>
                   </div>
@@ -176,22 +200,23 @@ export default function OrdersManagement() {
 
               {/* Order Items */}
               <div className="p-6">
-                <h4 className="font-medium text-gray-900 mb-4">Order Items:</h4>
+                <h4 className="font-medium mb-4" style={{ color: '#fff' }}>Order Items:</h4>
                 <div className="space-y-3">
                   {order.items.map((item, index) => (
-                    <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                    <div key={index} className="flex items-center gap-4 p-3 rounded-lg" style={{ background: '#181818' }}>
                       <img
                         src={item.food?.image || '/api/placeholder/60/60'}
                         alt={item.food?.name}
                         className="w-12 h-12 object-cover rounded-lg"
+                        style={{ border: 'none', background: '#fff' }}
                       />
                       <div className="flex-1">
-                        <h5 className="font-medium text-gray-900">{item.food?.name}</h5>
-                        <p className="text-sm text-gray-600">{item.food?.description}</p>
+                        <h5 className="font-medium" style={{ color: '#fff' }}>{item.food?.name}</h5>
+                        <p className="text-sm" style={{ color: '#888' }}>{item.food?.description}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium text-gray-900">Qty: {item.qty}</p>
-                        <p className="text-sm text-gray-600">{item.food?.price} ETB each</p>
+                        <p className="font-medium" style={{ color: '#fff' }}>Qty: <span style={{ color: '#fff' }}>{item.qty}</span></p>
+                        <p className="text-sm" style={{ color: '#888' }}>{item.price || item.food?.price} ETB each</p>
                       </div>
                     </div>
                   ))}
@@ -199,10 +224,10 @@ export default function OrdersManagement() {
               </div>
 
               {/* Order Actions */}
-              <div className="bg-gray-50 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="text-sm text-gray-600">
-                  <p>Total Items: {order.items.reduce((sum, item) => sum + item.qty, 0)}</p>
-                  <p>Order Total: <span className="font-semibold text-primary-500">{order.totalPrice} ETB</span></p>
+              <div className="px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4" style={{ background: '#181818' }}>
+                <div className="text-sm" style={{ color: '#fff' }}>
+                  <p>Total Items: <span style={{ color: '#fff', fontWeight: 600 }}>{order.items.reduce((sum, item) => sum + (item.qty || 1), 0)}</span></p>
+                  <p>Order Total: <span className="font-semibold" style={{ color: '#dd804f' }}>{order.totalPrice} ETB</span></p>
                 </div>
                 
                 <div className="flex gap-2">
@@ -210,7 +235,14 @@ export default function OrdersManagement() {
                     <button
                       onClick={() => handleStatusUpdate(order._id, getNextStatus(order.status))}
                       disabled={updatingStatus === order._id}
-                      className="bg-primary-500 hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                      className="px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                      style={{
+                        background: updatingStatus === order._id ? '#dd804f99' : '#dd804f',
+                        color: '#fff',
+                        opacity: updatingStatus === order._id ? 0.7 : 1,
+                        cursor: updatingStatus === order._id ? 'not-allowed' : 'pointer',
+                        fontWeight: 600
+                      }}
                     >
                       {updatingStatus === order._id ? (
                         <>
@@ -227,8 +259,14 @@ export default function OrdersManagement() {
                   )}
                   
                   {order.status === 'Delivered' && (
-                    <span className="bg-accent-100 text-accent-800 px-3 py-2 rounded-lg text-sm font-medium">
+                    <span className="px-3 py-2 rounded-lg text-sm font-medium" style={{ background: '#eee', color: '#222', fontWeight: 600 }}>
                       ✅ Completed
+                    </span>
+                  )}
+
+                  {order.status === 'Cancelled' && (
+                    <span className="px-3 py-2 rounded-lg text-sm font-medium" style={{ background: '#e3342f22', color: '#e3342f', fontWeight: 600 }}>
+                      ❌ Cancelled
                     </span>
                   )}
                 </div>
@@ -238,8 +276,8 @@ export default function OrdersManagement() {
         ) : (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">📦</div>
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">No orders found</h3>
-            <p className="text-gray-600">No orders match your current filter</p>
+            <h3 className="text-2xl font-semibold mb-2" style={{ color: '#dd804f' }}>No orders found</h3>
+            <p style={{ color: '#fff' }}>No orders match your current filter</p>
           </div>
         )}
       </div>

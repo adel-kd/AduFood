@@ -6,25 +6,24 @@ export const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true) // NEW
 
   useEffect(() => {
     const token = getToken()
     if (token) {
-      // For now, we'll just check if token exists
-      // In a real app, you'd fetch user profile from backend
       const userData = localStorage.getItem('user')
       if (userData) {
         setUser(JSON.parse(userData))
       }
     }
+    setLoading(false) // Done checking
   }, [])
 
   const loginUser = async (data) => {
     const res = await login(data)
-    // Use the isAdmin value from the backend response
     const userData = {
       ...res.data,
-      isAdmin: res.data.isAdmin || false // Use backend value or default to false
+      isAdmin: res.data.isAdmin || false
     }
     setToken(res.data.token)
     setUser(userData)
@@ -33,10 +32,9 @@ export function AuthProvider({ children }) {
 
   const registerUser = async (data) => {
     const res = await register(data)
-    // Use the isAdmin value from the backend response
     const userData = {
       ...res.data,
-      isAdmin: res.data.isAdmin || false // Use backend value or default to false
+      isAdmin: res.data.isAdmin || false
     }
     setToken(res.data.token)
     setUser(userData)
@@ -50,7 +48,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loginUser, registerUser, logout }}>
+    <AuthContext.Provider value={{ user, loading, loginUser, registerUser, logout }}>
       {children}
     </AuthContext.Provider>
   )

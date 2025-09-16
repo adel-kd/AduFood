@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../contexts/authcontext'
 import { CartContext } from '../contexts/cartcontext'
@@ -11,13 +11,34 @@ export default function FoodCard({ food }) {
   const [isFavorite, setIsFavorite] = useState(false)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [imageError, setImageError] = useState(false)
+  const cardRef = useRef(null)
+
+  // Tilt animation settings
+  const rotateAmplitude = 12
+  const scaleOnHover = 1.05
+
+  // Tilt effect
+  const handleMouseMove = (e) => {
+    const card = cardRef.current
+    const rect = card.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    const rotateY = ((x / rect.width) - 0.5) * 2 * rotateAmplitude
+    const rotateX = -((y / rect.height) - 0.5) * 2 * rotateAmplitude
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scaleOnHover})`
+  }
+
+  const handleMouseLeave = () => {
+    const card = cardRef.current
+    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)'
+  }
 
   const handleAddToCart = async () => {
     if (!user) {
       alert('Please login to add items to cart')
       return
     }
-    
+
     setIsAddingToCart(true)
     try {
       await addToCart({ foodId: food._id, quantity: 1 })
@@ -55,28 +76,21 @@ export default function FoodCard({ food }) {
     const hasHalfStar = rating % 1 !== 0
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(
-        <span key={i} className="text-yellow-400">★</span>
-      )
+      stars.push(<span key={i} style={{ color: '#dd804f' }}>★</span>)
     }
 
     if (hasHalfStar) {
-      stars.push(
-        <span key="half" className="text-yellow-400">☆</span>
-      )
+      stars.push(<span key="half" style={{ color: '#dd804f' }}>☆</span>)
     }
 
     const emptyStars = 5 - Math.ceil(rating)
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(
-        <span key={`empty-${i}`} className="text-gray-600">★</span>
-      )
+      stars.push(<span key={`empty-${i}`} className="text-gray-600">★</span>)
     }
 
     return stars
   }
 
-  // Default food images based on category
   const getDefaultImage = (category) => {
     const images = {
       burger: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop&auto=format',
@@ -88,12 +102,15 @@ export default function FoodCard({ food }) {
     return images[category] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop&auto=format'
   }
 
-  const handleImageError = () => {
-    setImageError(true)
-  }
+  const handleImageError = () => setImageError(true)
 
   return (
-    <div className="bg-gray-800 rounded-xl shadow-adu overflow-hidden hover:shadow-adu-lg transition-all duration-300 group border border-gray-700">
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="bg-gray-800 rounded-xl shadow-adu overflow-hidden transition-transform duration-300 group border border-gray-700 cursor-pointer relative"
+    >
       <div className="relative">
         <Link to={`/food/${food._id}`}>
           {imageError ? (
@@ -112,10 +129,13 @@ export default function FoodCard({ food }) {
             />
           )}
         </Link>
-        
-        {/* Category Badge */}
+
+        {/* Category Badge - Updated color */}
         <div className="absolute top-3 left-3">
-          <span className="bg-primary-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+          <span 
+            className="text-white px-3 py-1 rounded-full text-xs font-medium"
+            style={{ backgroundColor: '#dd804f' }}
+          >
             {food.category || 'Food'}
           </span>
         </div>
@@ -155,7 +175,10 @@ export default function FoodCard({ food }) {
         {/* Price and Actions */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <span className="text-2xl font-bold text-primary-400">
+            <span 
+              className="text-2xl font-bold"
+              style={{ color: '#dd804f' }}
+            >
               {food.price}
             </span>
             <span className="text-sm text-gray-400">ETB</span>
@@ -164,11 +187,17 @@ export default function FoodCard({ food }) {
           <button
             onClick={handleAddToCart}
             disabled={isAddingToCart}
-            className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-white"
+            style={{ 
+              // backgroundColor: '#dd804f',
+              hover: { backgroundColor: '#c9723c' }
+            }}
           >
             {isAddingToCart ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div 
+                  className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
+                ></div>
                 Adding...
               </>
             ) : (

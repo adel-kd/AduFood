@@ -98,7 +98,7 @@ export default function Favorites() {
     <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-display font-bold text-gray-900">Your Favorites</h1>
+        <h1 className="text-2xl font-bold mb-6" style={{ color: '#dd804f' }}>My Favorites</h1>
           <p className="text-gray-600 mt-2">{favorites.length} favorite items</p>
         </div>
         <div className="flex items-center gap-2 text-primary-500">
@@ -151,7 +151,7 @@ export default function Favorites() {
                 <div className="flex">
                   {renderStars(food.rating || 0)}
                 </div>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-600">
                   ({food.numReviews || 0} reviews)
                 </span>
               </div>
@@ -159,18 +159,18 @@ export default function Favorites() {
               {/* Price and Actions */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1">
-                  <span className="text-2xl font-bold text-primary-500">
+                  <span className="text-2xl font-bold text-gray-600">
                     {food.price}
                   </span>
-                  <span className="text-sm text-gray-500">ETB</span>
+                  <span className="text-sm text-gray-600">ETB</span>
                 </div>
                 
                 <Link
                   to={`/food/${food._id}`}
-                  className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                  className="bg-primary-500 hover:bg-primary-600 text-black px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
                 >
                   <span>👁️</span>
-                  View Details
+                  Details
                 </Link>
               </div>
             </div>

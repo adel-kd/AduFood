@@ -1,3 +1,4 @@
+// contexts/cartcontext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react'
 import { getCart, addToCart, removeFromCart, clearCart } from '../api/cart.js'
 import { AuthContext } from './authcontext.jsx'
@@ -19,10 +20,40 @@ export function CartProvider({ children }) {
   const fetchCart = async () => {
     try {
       const response = await getCart()
-      setCartItems(response.data.items || [])
+      const rawItems = response.data.items || []
+
+      const normalized = rawItems
+        .filter(item => item.food)
+        .map(item => ({
+          _id: item.food._id,
+          name: item.food.name,
+          description: item.food.description,
+          image: item.food.image,
+          price: Number(item.food.price) || 0,
+          quantity: item.quantity || 1
+        }))
+
+      setCartItems(normalized)
     } catch (error) {
       console.error('Error fetching cart:', error)
     }
+  }
+
+  // NEW FUNCTION: Get quantity for a specific food item in orders
+  const getOrderItemQuantity = (orderItem) => {
+    // First try the most common field names
+    if (orderItem.qty !== undefined && orderItem.qty !== null) return orderItem.qty;
+    if (orderItem.quantity !== undefined && orderItem.quantity !== null) return orderItem.quantity;
+    
+    // If we have the food object with quantity (from cart context)
+    if (orderItem.food && orderItem.food.quantity) return orderItem.food.quantity;
+    
+    // Fallback: check if we have this item in current cart for reference
+    const cartItem = cartItems.find(item => item._id === orderItem.food?._id);
+    if (cartItem) return cartItem.quantity;
+    
+    // Final fallback
+    return 1;
   }
 
   const addItemToCart = (food, quantity = 1) => {
@@ -35,7 +66,17 @@ export function CartProvider({ children }) {
             : item
         )
       } else {
-        return [...prevItems, { ...food, quantity }]
+        return [
+          ...prevItems,
+          {
+            _id: food._id,
+            name: food.name,
+            description: food.description,
+            image: food.image,
+            price: Number(food.price) || 0,
+            quantity
+          }
+        ]
       }
     })
   }
@@ -61,11 +102,15 @@ export function CartProvider({ children }) {
   }
 
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
+    return cartItems.reduce((total, item) => {
+      const price = Number(item.price) || 0
+      const qty = Number(item.quantity) || 0
+      return total + price * qty
+    }, 0)
   }
 
   const getTotalItems = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0)
+    return cartItems.reduce((total, item) => total + (item.quantity || 0), 0)
   }
 
   return (
@@ -77,7 +122,8 @@ export function CartProvider({ children }) {
       clearCartItems,
       getTotalPrice,
       getTotalItems,
-      fetchCart
+      fetchCart,
+      getOrderItemQuantity // NEW: Export the function
     }}>
       {children}
     </CartContext.Provider>

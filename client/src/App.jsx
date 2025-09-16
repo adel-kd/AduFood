@@ -16,6 +16,8 @@ import { AuthProvider } from './contexts/authcontext.jsx';
 import { CartProvider } from './contexts/cartcontext.jsx';
 import OrdersManagement from './pages/OrdersManagment.jsx';
 import AddOrEditFood from './pages/AddOrEditFood.jsx';
+import PaymentPage from './pages/PaymentPage.jsx';
+// import PaymentResult from './pages/PaymentResult.jsx';
 
 function App() {
   return (
@@ -23,39 +25,26 @@ function App() {
       <CartProvider>
         <Layout>
           <Routes>
-            {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/food/:id" element={<FoodDetail />} />
 
-            {/* Protected Routes for Logged-in Users */}
-            <Route path="/cart" element={
-              <ProtectedRoute><Cart /></ProtectedRoute>
-            } />
-            <Route path="/favorites" element={
-              <ProtectedRoute><Favorites /></ProtectedRoute>
-            } />
-            <Route path="/orders" element={
-              <ProtectedRoute><Orders /></ProtectedRoute>
-            } />
+            {/* Protected Routes */}
+            <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+            <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
+            <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+            <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
 
             {/* Admin Routes */}
-            <Route path="/admin" element={
-              <ProtectedRoute adminRequired><AdminDashboard /></ProtectedRoute>
-            } />
-            <Route path="/admin/foods" element={
-              <ProtectedRoute adminRequired><ManageFoods /></ProtectedRoute>
-            } />
-            <Route path="/admin/analytics" element={
-              <ProtectedRoute adminRequired><Analytics /></ProtectedRoute>
-            } />
-            <Route path="/admin/orders" element={
-              <ProtectedRoute adminRequired><OrdersManagement /></ProtectedRoute>
-            } />
-            <Route path="/admin/food/:id?" element={
-              <ProtectedRoute adminRequired><AddOrEditFood /></ProtectedRoute>
-            } />
+            <Route path="/admin" element={<ProtectedRoute adminRequired><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/foods" element={<ProtectedRoute adminRequired><ManageFoods /></ProtectedRoute>} />
+            <Route path="/admin/analytics" element={<ProtectedRoute adminRequired><Analytics /></ProtectedRoute>} />
+            <Route path="/admin/orders" element={<ProtectedRoute adminRequired><OrdersManagement /></ProtectedRoute>} />
+            <Route path="/admin/food/:id?" element={<ProtectedRoute adminRequired><AddOrEditFood /></ProtectedRoute>} />
+
+            {/* Checkout Success */}
+            {/* <Route path="/checkout" element={< PaymentResult />} /> */}
           </Routes>
         </Layout>
       </CartProvider>

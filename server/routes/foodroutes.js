@@ -1,40 +1,42 @@
-// routes/foodRoutes.js
-
-import express from "express";
+import express from 'express';
 import {
   getFoods,
-  getFoodById,          // ✅ New
+  getFoodById,
   createFood,
   updateFood,
   deleteFood,
-  createFoodReview,      // ✅ New
-  getTopFoods            // ✅ New
-} from "../controllers/foodcontroller.js";
+  createFoodReview,
+  updateReview,
+  deleteReview,
+  getTopFoods,
+  getCategories 
+} from '../controllers/foodcontroller.js';
+import { protect} from '../middleware/authMiddleware.js';
 
-import { protect } from "../middleware/authMiddleware.js";
-import { admin } from "../middleware/adminMiddleware.js";
+import {  admin } from '../middleware/adminMiddleware.js';
 
 const router = express.Router();
 
-// @route   GET /api/foods
-// @desc    Get all foods (with filtering/pagination)
-router.get("/", getFoods);
+router.route('/')
+  .get(getFoods)
+  .post(protect, admin, createFood);
 
-// @route   GET /api/foods/top
-// @desc    Get top rated foods
-router.get("/top", getTopFoods); // ✅ New route (MUST be before /:id)
+router.route('/categories')
+  .get(getCategories);
 
-// @route   GET /api/foods/:id
-// @desc    Get food by ID
-router.get("/:id", getFoodById); // ✅ New
+router.route('/top')
+  .get(getTopFoods);
 
-// @route   POST /api/foods/:id/reviews
-// @desc    Add review to food
-router.post("/:id/reviews", protect, createFoodReview); // ✅ New
+router.route('/:id')
+  .get(getFoodById)
+  .put(protect, admin, updateFood)
+  .delete(protect, admin, deleteFood);
 
-// Only admins can create/update/delete foods
-router.post("/", protect, admin, createFood);
-router.put("/:id", protect, admin, updateFood);
-router.delete("/:id", protect, admin, deleteFood);
+router.route('/:id/reviews')
+  .post(protect, createFoodReview);
+
+router.route('/:id/reviews/:reviewId')
+  .put(protect, updateReview)
+  .delete(protect, deleteReview);
 
 export default router;

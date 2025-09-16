@@ -1,3 +1,4 @@
+// server/models/Order.js
 import mongoose from 'mongoose';
 
 const orderSchema = mongoose.Schema({
@@ -6,12 +7,13 @@ const orderSchema = mongoose.Schema({
     {
       food: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Food' },
       qty: { type: Number, required: true, default: 1 },
+      price: { type: Number, required: true }
     },
   ],
   totalPrice: { type: Number, required: true },
   status: {
     type: String,
-    enum: ['Pending', 'Confirmed', 'Delivered'],
+    enum: ['Pending', 'Confirmed', 'Delivered', 'Cancelled'],
     default: 'Pending',
   },
 }, {

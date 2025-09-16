@@ -1,5 +1,7 @@
 import React from 'react'
 import Navbar from './Navbar.jsx'
+import { FaTiktok, FaInstagram, FaTelegramPlane } from "react-icons/fa";
+
 
 export default function Layout({ children }) {
   return (
@@ -14,13 +16,13 @@ export default function Layout({ children }) {
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1 md:col-span-2">
-              <h3 className="text-xl font-display font-bold text-primary-500 mb-4">Adu Food</h3>
+            <img src="../../images/fulllogo.png" alt="logo" className="w-30 h-10" />
               <p className="text-gray-300 mb-4">Delicious Ethiopian and international cuisine delivered fresh to your door.</p>
-              <div className="flex gap-4">
-                <span className="text-2xl">🍽️</span>
-                <span className="text-2xl">🚚</span>
-                <span className="text-2xl">⭐</span>
-              </div>
+              <div className="flex space-x-6 text-[28px]">
+      <FaTiktok style={{ color: "#dd804f" }} />
+      <FaInstagram style={{ color: "#dd804f" }} />
+      <FaTelegramPlane style={{ color: "#dd804f" }} />
+    </div>
             </div>
             <div>
               <h4 className="font-semibold text-gray-100 mb-4">Quick Links</h4>
