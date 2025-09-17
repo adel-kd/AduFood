@@ -130,7 +130,7 @@ export default function FoodCard({ food }) {
           )}
         </Link>
 
-        {/* Category Badge - Updated color */}
+        {/* Category Badge*/}
         <div className="absolute top-3 left-3">
           <span 
             className="text-white px-3 py-1 rounded-full text-xs font-medium"
@@ -203,7 +203,7 @@ export default function FoodCard({ food }) {
             ) : (
               <>
                 <span>🛒</span>
-                Add to Cart
+                Cart
               </>
             )}
           </button>

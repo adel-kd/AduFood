@@ -4,13 +4,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../contexts/authcontext'
 import { CartContext } from '../contexts/cartcontext'
 import { removeFromCart } from '../api/cart'
-import { placeOrder } from '../api/order'
 
 export default function Cart() {
   const { user } = useContext(AuthContext)
-  const { cartItems, removeItem, clearCartItems, updateQuantity, fetchCart, getTotalPrice } = useContext(CartContext)
+  const { cartItems, removeItem, updateQuantity, fetchCart, getTotalPrice } = useContext(CartContext)
   const [loading, setLoading] = useState(false)
-  const [placingOrder, setPlacingOrder] = useState(false)
+  const [proceeding, setProceeding] = useState(false)
 
   const navigate = useNavigate()
 
@@ -53,43 +52,20 @@ export default function Cart() {
     }
   }
 
-  const handlePlaceOrder = async () => {
+  // Instead of placing the order here, just go to payment page with cart info
+  const handleProceedToPayment = () => {
     if (cartItems.length === 0) return
-
-    setPlacingOrder(true)
-    try {
-      const orderPayload = {
-        items: cartItems.map(item => ({
-          food: item._id,
-          qty: item.quantity,
-          price: item.price
-        })),
-        totalPrice: getTotalPrice()
+    setProceeding(true)
+    // Pass cart items and total price to payment page
+    navigate('/payment', {
+      state: {
+        cartItems: cartItems,
+        amount: getTotalPrice(),
+        userEmail: user?.email,
+        userPhone: user?.phone || ''
       }
-
-      // console.log('Order payload:', orderPayload);
-
-      const orderResponse = await placeOrder(orderPayload)
-      const createdOrder = orderResponse.data
-
-      // console.log('Order created:', createdOrder);
-
-      clearCartItems()
-
-      navigate('/payment', {
-        state: {
-          orderId: createdOrder._id,
-          amount: createdOrder.totalPrice,
-          userEmail: user.email,
-          userPhone: user.phone || ''
-        }
-      })
-    } catch (error) {
-      console.error('Error placing order:', error)
-      alert('Failed to place order: ' + (error?.response?.data?.message || error.message))
-    } finally {
-      setPlacingOrder(false)
-    }
+    })
+    setProceeding(false)
   }
 
   const totalPrice = getTotalPrice()
@@ -201,20 +177,20 @@ export default function Cart() {
               </div>
 
               <button
-                onClick={handlePlaceOrder}
-                disabled={placingOrder || cartItems.length === 0}
+                onClick={handleProceedToPayment}
+                disabled={proceeding || cartItems.length === 0}
                 className="w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                 style={{
-                  backgroundColor: placingOrder || cartItems.length === 0 ? '#e6a77e' : '#dd804f',
+                  backgroundColor: proceeding || cartItems.length === 0 ? '#e6a77e' : '#dd804f',
                   color: '#fff',
-                  opacity: placingOrder || cartItems.length === 0 ? 0.7 : 1,
-                  cursor: placingOrder || cartItems.length === 0 ? 'not-allowed' : 'pointer'
+                  opacity: proceeding || cartItems.length === 0 ? 0.7 : 1,
+                  cursor: proceeding || cartItems.length === 0 ? 'not-allowed' : 'pointer'
                 }}
               >
-                {placingOrder ? (
+                {proceeding ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Placing Order...
+                    Proceeding...
                   </>
                 ) : (
                   'Proceed to Checkout'

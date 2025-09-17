@@ -1,13 +1,36 @@
-import React, { useContext, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useContext, useState, useRef, useEffect } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/authcontext";
 import { CartContext } from "../contexts/cartcontext";
-import { ShoppingCart, Heart, Package, Settings, Home, Menu, LogOut } from "lucide-react";
+import { ShoppingCart, Heart, Package, Settings, Home, Menu, LogOut, ChevronDown } from "lucide-react";
+import { User } from 'lucide-react';
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
   const [open, setOpen] = useState(false);
+
+  // Dropdown state for greeting/profile
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    if (dropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownOpen]);
 
   const linkBase =
     "relative px-3 py-2 rounded-md text-sm font-medium hover:bg-primary-500/10 hover:text-primary-400 transition-colors";
@@ -91,15 +114,38 @@ export default function Navbar() {
           {/* Desktop Auth */}
           <div className="hidden sm:flex items-center gap-2">
             {user ? (
-              <>
-                <span className="text-sm text-gray-300">Hi, {user.name || user.email}</span>
+              <div className="relative" ref={dropdownRef}>
                 <button
-                  onClick={logout}
-                  className="px-4 py-2 rounded-lg text-sm font-medium bg-primary-500 text-white hover:bg-primary-600 transition-colors flex items-center gap-1"
+                  onClick={() => setDropdownOpen((v) => !v)}
+                  className="flex items-center gap-2 text-gray-300 hover:text-white transition px-3 py-2 rounded-md"
+                  aria-haspopup="true"
+                  aria-expanded={dropdownOpen}
                 >
-                  <LogOut className="w-4 h-4" /> Logout
+                  <User size={20} />
+                  <span className="text-sm text-gray-300">Hi, {user.name || user.email}</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
                 </button>
-              </>
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-44 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-50 py-1">
+                    <Link
+                      to="/profile"
+                      className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-primary-500/10 hover:text-primary-400 transition-colors text-sm"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      <User size={16} /> Profile
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        logout();
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-left text-gray-300 hover:bg-primary-500/10 hover:text-primary-400 transition-colors text-sm"
+                    >
+                      <LogOut className="w-4 h-4" /> Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <NavLink
@@ -181,15 +227,25 @@ export default function Navbar() {
                   <Settings className="inline w-4 h-4 mr-1" /> Admin
                 </NavLink>
               )}
-              <button
-                onClick={() => {
-                  setOpen(false);
-                  logout();
-                }}
-                className={`${linkBase} block w-full text-left bg-primary-500 text-white hover:bg-primary-600 flex items-center gap-1`}
-              >
-                <LogOut className="w-4 h-4" /> Logout
-              </button>
+              {/* Mobile: Profile and Logout in dropdown style */}
+              <div className="border-t border-gray-700 pt-2 mt-2">
+                <NavLink
+                  to="/profile"
+                  onClick={() => setOpen(false)}
+                  className={`${linkBase} block w-full text-left flex items-center gap-2`}
+                >
+                  <User size={16} /> Profile
+                </NavLink>
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    logout();
+                  }}
+                  className={`${linkBase} block w-full text-left bg-primary-500 text-white hover:bg-primary-600 flex items-center gap-1 mt-1`}
+                >
+                  <LogOut className="w-4 h-4" /> Logout
+                </button>
+              </div>
             </>
           ) : (
             <>

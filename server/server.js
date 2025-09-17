@@ -16,7 +16,7 @@ import orderRoutes from './routes/orderroutes.js';
 import reviewRoutes from './routes/reviewroutes.js';
 import userRoutes from './routes/userRoutes.js';
 import mockTransactionRoute from './routes/mockTransactionRoutes.js';
-
+import addressRoutes from './routes/addressRoutes.js';
 const app = express();
 
 // ======= MIDDLEWARE ======= //
@@ -35,7 +35,7 @@ app.use('/api/foods', foodRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/users', userRoutes);
-
+app.use('/api/user/addresses', addressRoutes);
 app.use('/api/transactions',mockTransactionRoute);
 
 app.get('/', (req, res) => {

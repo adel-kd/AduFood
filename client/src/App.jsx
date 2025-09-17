@@ -18,6 +18,7 @@ import OrdersManagement from './pages/OrdersManagment.jsx';
 import AddOrEditFood from './pages/AddOrEditFood.jsx';
 import PaymentPage from './pages/PaymentPage.jsx';
 // import PaymentResult from './pages/PaymentResult.jsx';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
             <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
             <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<ProtectedRoute adminRequired><AdminDashboard /></ProtectedRoute>} />
