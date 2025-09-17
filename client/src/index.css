@@ -1,47 +1,48 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
 
-@layer base {
-  html {
-    font-family: 'Inter', system-ui, sans-serif;
-    background-color: #111827; /* Black background */
-    color: #f9fafb; /* Light text */
-  }
-  
-  body {
-    background-color: #111827;
-    color: #f9fafb;
-  }
-  
-  .font-display {
-    font-family: 'Poppins', system-ui, sans-serif;
-  }
+/* Your custom styles without @layer directives */
+html {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #111827;
+  color: #f9fafb;
 }
 
-@layer utilities {
-  .line-clamp-1 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-  }
-  
-  .line-clamp-2 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-  
-  .line-clamp-3 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-  }
+body {
+  background-color: #111827;
+  color: #f9fafb;
+  margin: 0;
+  padding: 0;
 }
 
-/* Custom scrollbar */
+.font-display {
+  font-family: 'Poppins', system-ui, sans-serif;
+}
+
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -59,18 +60,15 @@
   background: #c26534;
 }
 
-/* Smooth transitions */
 * {
   transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
-/* Focus styles */
 .focus-visible:focus {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 
-/* Loading animation */
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
@@ -84,7 +82,6 @@
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Adu Food brand gradients */
 .adu-gradient {
   background: linear-gradient(135deg, #111827 0%, #1e3a8a 50%, #3b82f6 100%);
 }

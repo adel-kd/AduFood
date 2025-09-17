@@ -2,7 +2,7 @@ import axios from 'axios'
 import { getToken } from '../utils/auth.js'
 
 const instance = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://adufoods-1.onrender.com/api',
 })
 
 instance.interceptors.request.use(config => {

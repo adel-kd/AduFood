@@ -74,7 +74,7 @@ export default function ManageFoods() {
     const stars = []
     for (let i = 1; i <= 5; i++) {
       stars.push(
-        <span key={i} style={{ color: i <= rating ? '#dd804f' : '#222', fontSize: '1rem' }}>
+        <span key={i} className={`text-lg ${i <= rating ? 'text-amber-400' : 'text-gray-600'}`}>
           ★
         </span>
       )
@@ -82,193 +82,198 @@ export default function ManageFoods() {
     return stars
   }
 
-  // Helper for food "status" color (for visual consistency)
+  // Helper for food "status" color
   const getCategoryColor = (category) => {
-    if (!category) return 'bg-gray-100 text-black font-bold'
-    return 'bg-yellow-500/20 text-yellow-400 font-bold'
+    if (!category) return 'bg-gray-600 text-white'
+    const colors = [
+      'bg-amber-500/20 text-amber-400',
+      'bg-emerald-500/20 text-emerald-400',
+      'bg-rose-500/20 text-rose-400',
+      'bg-blue-500/20 text-blue-400',
+      'bg-purple-500/20 text-purple-400'
+    ]
+    return colors[category.length % colors.length]
   }
 
-  // Helper for food "icon"
-  const getFoodIcon = () => '🍽️'
+  // Helper for food "icon" based on category
+  const getFoodIcon = (category) => {
+    if (!category) return '🍽️'
+    const icons = {
+      'traditional': '🍛',
+      'breakfast': '🥞',
+      'lunch': '🍲',
+      'dinner': '🍴',
+      'drink': '🥤',
+      'dessert': '🍰'
+    }
+    return icons[category.toLowerCase()] || '🍽️'
+  }
 
   // Helper for formatting price
   const formatPrice = (price) => `${price} ETB`
 
   return (
-    <div className="max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold mb-6" style={{ color: '#dd804f' }}>Manage Foods</h1>
-          <p className="mt-2" style={{ color: '#fff' }}>Add, edit, or delete food items in your menu</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-amber-500 mb-2">Manage Foods</h1>
+            <p className="text-gray-300">Add, edit, or delete food items in your menu</p>
+          </div>
+          <Link
+            to="/admin/food/new"
+            className="mt-4 sm:mt-0 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-amber-500/25"
+          >
+            <span className="text-lg">➕</span>
+            Add New Food
+          </Link>
         </div>
-        <Link
-          to="/admin/food/new"
-          className="mt-4 sm:mt-0 px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2"
-          style={{
-            background: '#dd804f',
-            color: '#fff',
-            fontWeight: 600
-          }}
-        >
-          <span>➕</span>
-          Add New Food
-        </Link>
-      </div>
 
-      {/* Search and Filter */}
-      <div className="rounded-xl shadow-adu p-6 mb-8 border" style={{ background: '#181818', borderColor: '#222' }}>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <input
-              type="text"
-              placeholder="Search foods..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full p-4 pl-12 border-2 rounded-xl focus:outline-none focus:border-[#dd804f] text-lg"
-              style={{
-                borderColor: '#222',
-                background: '#111',
-                color: '#fff',
-                fontWeight: 500
-              }}
-            />
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl" style={{ color: '#dd804f' }}>🔎</span>
-          </div>
-          <div className="relative w-full sm:w-64">
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full p-4 pl-10 border-2 rounded-xl focus:outline-none focus:border-[#dd804f] text-lg appearance-none"
-              style={{
-                borderColor: '#222',
-                background: '#111',
-                color: '#fff',
-                fontWeight: 500
-              }}
-            >
-              <option value="">All Categories</option>
-              {categories.map((category, index) => (
-                <option key={index} value={category._id || category}>
-                  {category.name || category}
-                </option>
-              ))}
-            </select>
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl" style={{ color: '#dd804f' }}></span>
-          </div>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-10 mb-10">
-        <div className="rounded-xl shadow-ethiopian p-6 text-center" style={{ background: '#181818' }}>
-          <div className="text-3xl font-bold mb-2" style={{ color: '#fff' }}>{foods.length}</div>
-          <p style={{ color: '#fff' }}>Total Foods</p>
-        </div>
-        <div className="rounded-xl shadow-ethiopian p-6 text-center" style={{ background: '#181818' }}>
-          <div className="text-3xl font-bold mb-2" style={{ color: '#fff' }}>
-            {foods.reduce((sum, food) => sum + (food.numReviews || 0), 0)}
-          </div>
-          <p style={{ color: '#fff' }}>Total Reviews</p>
-        </div>
-        <div className="rounded-xl shadow-ethiopian p-6 text-center" style={{ background: '#181818' }}>
-          <div className="text-3xl font-bold mb-2" style={{ color: '#fff' }}>
-            {foods.length > 0 ? (foods.reduce((sum, food) => sum + (food.rating || 0), 0) / foods.length).toFixed(1) : 0}
-          </div>
-          <p style={{ color: '#fff' }}>Average Rating</p>
-        </div>
-        <div className="rounded-xl shadow-ethiopian p-6 text-center" style={{ background: '#181818' }}>
-          <div className="text-3xl font-bold mb-2" style={{ color: '#fff' }}>
-            {foods.reduce((sum, food) => sum + (food.price || 0), 0).toFixed(2)} ETB
-          </div>
-          <p style={{ color: '#fff' }}>Total Value</p>
-        </div>
-      </div>
-
-      {/* Foods List */}
-      <div className="space-y-6">
-        {loading ? (
-          <div className="text-center py-16">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#dd804f' }}></div>
-            <p className="mt-4 text-lg" style={{ color: '#dd804f' }}>Loading foods...</p>
-          </div>
-        ) : foods.length > 0 ? (
-          foods.map((food) => (
-            <div key={food._id} className="rounded-xl shadow-ethiopian overflow-hidden" style={{ background: '#222' }}>
-              {/* Food Header */}
-              <div className="p-6 border-b-0" style={{ background: '#181818' }}>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-semibold" style={{ color: '#fff' }}>
-                      {getFoodIcon()} {food.name}
-                    </h3>
-                    <p className="text-sm" style={{ color: '#888' }}>{food.description}</p>
-                    <p className="text-sm" style={{ color: '#fff' }}>
-                      Category: <span style={{ color: '#fff', fontWeight: 600 }}>{food.category?.name || food.category || 'Uncategorized'}</span>
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(food.category)}`}
-                      style={{
-                        background: '#dd804f22',
-                        color: '#dd804f',
-                        fontWeight: 600
-                      }}
-                    >
-                      {food.category?.name || food.category || 'Uncategorized'}
-                    </span>
-                    <span className="text-xl font-bold" style={{ color: '#dd804f' }}>
-                      {formatPrice(food.price)}
-                    </span>
-                  </div>
-                </div>
+        {/* Search and Filter */}
+        <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-700 shadow-xl">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span className="text-amber-500 text-lg">🔍</span>
               </div>
+              <input
+                type="text"
+                placeholder="Search foods by name..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-gray-900 border-2 border-gray-700 rounded-xl focus:outline-none focus:border-amber-500 text-white placeholder-gray-400 transition-colors"
+              />
+            </div>
+            <div className="relative w-full sm:w-64">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span className="text-amber-500 text-lg">📋</span>
+              </div>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-gray-900 border-2 border-gray-700 rounded-xl focus:outline-none focus:border-amber-500 text-white appearance-none transition-colors"
+              >
+                <option value="">All Categories</option>
+                {categories.map((category, index) => (
+                  <option key={index} value={category._id || category}>
+                    {category.name || category}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
 
-              {/* Food Details */}
-              <div className="p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={food.image || '/api/placeholder/60/60'}
-                      alt={food.name}
-                      className="w-16 h-16 object-cover rounded-lg"
-                      style={{ border: 'none', background: '#fff' }}
-                    />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <div className="flex">{renderStars(Math.floor(food.rating || 0))}</div>
-                        <span className="text-sm font-medium" style={{ color: '#fff' }}>{food.rating || 0}</span>
-                      </div>
-                      <span className="text-sm" style={{ color: '#fff' }}>{food.numReviews || 0} reviews</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Link
-                      to={`/admin/food/${food._id}`}
-                      className="font-medium text-sm"
-                      style={{ color: '#dd804f' }}
-                    >
-                      Edit
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(food._id, food.name)}
-                      className="font-medium text-sm"
-                      style={{ color: '#fff', background: '#dd804f', borderRadius: 6, padding: '2px 10px', fontWeight: 600 }}
-                    >
-                      Delete
-                    </button>
-                  </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          {[
+            { title: 'Total Foods', value: foods.length, icon: '🍽️', color: 'amber' },
+            { 
+              title: 'Total Reviews', 
+              value: foods.reduce((sum, food) => sum + (food.numReviews || 0), 0), 
+              icon: '⭐', 
+              color: 'blue' 
+            },
+            { 
+              title: 'Average Rating', 
+              value: foods.length > 0 ? (foods.reduce((sum, food) => sum + (food.rating || 0), 0) / foods.length).toFixed(1) : 0, 
+              icon: '🌟', 
+              color: 'green' 
+            },
+            { 
+              title: 'Total Value', 
+              value: foods.reduce((sum, food) => sum + (food.price || 0), 0).toFixed(0), 
+              icon: '💰', 
+              color: 'purple' 
+            }
+          ].map((stat, index) => (
+            <div key={index} className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">{stat.title}</p>
+                  <p className="text-2xl font-bold text-white">{stat.value}</p>
                 </div>
+                <span className="text-3xl">{stat.icon}</span>
               </div>
             </div>
-          ))
-        ) : (
-          <div className="text-center py-16" style={{ color: '#dd804f' }}>
-            <div className="text-4xl mb-2">🍽️</div>
-            No foods found
-          </div>
-        )}
+          ))}
+        </div>
+
+        {/* Foods List */}
+        <div className="space-y-4">
+          {loading ? (
+            <div className="text-center py-16">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
+              <p className="mt-4 text-lg text-amber-500">Loading foods...</p>
+            </div>
+          ) : foods.length > 0 ? (
+            foods.map((food) => (
+              <div key={food._id} className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700 shadow-lg hover:shadow-amber-500/10 transition-all duration-200">
+                {/* Food Header */}
+                <div className="p-6 bg-gray-900/50">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-2xl">{getFoodIcon(food.category?.name || food.category)}</span>
+                        <h3 className="text-xl font-semibold text-white">{food.name}</h3>
+                      </div>
+                      <p className="text-gray-400 text-sm mb-2 line-clamp-2">{food.description}</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(food.category)}`}>
+                        {food.category?.name || food.category || 'Uncategorized'}
+                      </span>
+                      <span className="text-xl font-bold text-amber-500">
+                        {formatPrice(food.price)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Food Details */}
+                <div className="p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={food.image || '/api/placeholder/80/80'}
+                        alt={food.name}
+                        className="w-16 h-16 object-cover rounded-lg border-2 border-gray-700"
+                      />
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="flex">{renderStars(Math.floor(food.rating || 0))}</div>
+                          <span className="text-sm font-medium text-white">{food.rating || 0}/5</span>
+                        </div>
+                        <span className="text-sm text-gray-400">{food.numReviews || 0} reviews</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Link
+                        to={`/admin/food/${food._id}`}
+                        className="px-4 py-2 bg-gray-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(food._id, food.name)}
+                        className="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-lg transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-16 bg-gray-800/50 rounded-2xl border border-gray-700">
+              <div className="text-6xl mb-4">🍽️</div>
+              <h3 className="text-xl font-semibold text-amber-500 mb-2">No foods found</h3>
+              <p className="text-gray-400">Try adjusting your search or add a new food item</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

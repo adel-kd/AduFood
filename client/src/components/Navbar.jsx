@@ -52,7 +52,7 @@ export default function Navbar() {
               <Menu className="h-6 w-6" />
             </button>
             <Link to="/" className="flex items-center gap-2">
-              <img src="../../images/fulllogo.png" alt="logo" className="w-50 h-18 pt-2" />
+              <img src="../../images/fulllogo.png" alt="logo" className="w-30 h-10 pt-2" />
             </Link>
           </div>
 

@@ -26,11 +26,15 @@ export default function FoodCard({ food }) {
     const rotateY = ((x / rect.width) - 0.5) * 2 * rotateAmplitude
     const rotateX = -((y / rect.height) - 0.5) * 2 * rotateAmplitude
     card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scaleOnHover})`
+    // Make the animation snappier
+    card.style.transition = 'transform 90ms cubic-bezier(0.4,0,0.2,1)'
   }
 
   const handleMouseLeave = () => {
     const card = cardRef.current
     card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)'
+    // Make the return to normal snappy as well
+    card.style.transition = 'transform 120ms cubic-bezier(0.4,0,0.2,1)'
   }
 
   const handleAddToCart = async () => {
@@ -109,7 +113,10 @@ export default function FoodCard({ food }) {
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="bg-gray-800 rounded-xl shadow-adu overflow-hidden transition-transform duration-300 group border border-gray-700 cursor-pointer relative"
+      className="bg-gray-800 rounded-xl shadow-adu overflow-hidden group border border-gray-700 cursor-pointer relative"
+      style={{
+        transition: 'transform 90ms cubic-bezier(0.4,0,0.2,1)'
+      }}
     >
       <div className="relative">
         <Link to={`/food/${food._id}`}>
@@ -124,7 +131,7 @@ export default function FoodCard({ food }) {
             <img 
               src={food.image || getDefaultImage(food.category)} 
               alt={food.name}
-              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-150"
               onError={handleImageError}
             />
           )}
