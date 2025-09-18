@@ -21,7 +21,7 @@ const app = express();
 
 // ======= MIDDLEWARE ======= //
 app.use(cors({
-  origin: 'http://localhost:3000', // Frontend URL
+  origin: 'https://adu-food-gsv5.vercel.app/', // Frontend URL
   credentials: true,
 }));
 app.use(express.json()); 
