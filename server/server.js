@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -17,17 +16,29 @@ import reviewRoutes from './routes/reviewroutes.js';
 import userRoutes from './routes/userRoutes.js';
 import mockTransactionRoute from './routes/mockTransactionRoutes.js';
 import addressRoutes from './routes/addressRoutes.js';
+
 const app = express();
 
-// ======= MIDDLEWARE ======= //
-app.use(cors({
-  origin: 'https://adu-food-gsv5.vercel.app/', // Frontend URL
-  credentials: true,
-}));
-app.use(express.json()); 
-app.use(cookieParser()); 
+// ===== MIDDLEWARE ===== //
 
-// ======= ROUTES ======= //
+// Log requests
+app.use((req, _res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// ✅ CORS – allow ONLY your deployed frontend
+app.use(
+  cors({
+    origin: 'https://adu-food-gsv5.vercel.app', // ← exact match, no trailing slash
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+app.use(cookieParser());
+
+// ===== ROUTES ===== //
 app.use('/api/admin', adminRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/favorite', favoriteRoutes);
@@ -36,42 +47,27 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/user/addresses', addressRoutes);
-app.use('/api/transactions',mockTransactionRoute);
+app.use('/api/transactions', mockTransactionRoute);
 
-app.get('/', (req, res) => {
-  res.send(' Food Delivery API is running...');
+app.get('/', (_req, res) => {
+  res.send('Food Delivery API is running...');
 });
 
-// ======= CONNECT TO DB AND START SERVER ======= //
+// ===== DB + SERVER ===== //
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('✅ MongoDB connected');
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log('✅ MongoDB connected');
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`✅ CORS allowed origin: https://adu-food-gsv5.vercel.app`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ MongoDB connection failed:', err.message);
   });
-})
-.catch((err) => {
-  console.error('❌ MongoDB connection failed:', err.message);
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -46,7 +46,7 @@ export default function Register() {
       <div className="max-w-md w-full space-y-8">
         {/* Logo only, no brand text */}
         <div className="flex items-center justify-center gap-3 mb-4">
-          <img src="../../images/logoicon.png" alt="logo" className="w-30 h-30 rounded-lg" />
+          <img src="../../dist/images/logoicon.png" alt="logo" className="w-30 h-30 rounded-lg" />
         </div>
         <div className="text-center">
           <h2

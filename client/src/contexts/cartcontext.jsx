@@ -123,7 +123,7 @@ export function CartProvider({ children }) {
       getTotalPrice,
       getTotalItems,
       fetchCart,
-      getOrderItemQuantity // NEW: Export the function
+      getOrderItemQuantity 
     }}>
       {children}
     </CartContext.Provider>

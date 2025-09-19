@@ -73,51 +73,79 @@ const Home = () => {
           <div className="absolute inset-0 h-64 md:h-96 bg-gradient-to-b from-black/70 via-black/40 to-transparent" />
           
           {/* Hero content */}
-          <div className="relative flex flex-col justify-center items-center h-64 md:h-96 text-center px-4">
-            {/* AnimatedPlate component */}
-            <div className="flex items-center justify-center mb-4 md:mb-6">
-              <span className="relative inline-block">
-                <span className="absolute animate-pulse -top-2 -left-2 w-16 h-16 rounded-full bg-[#dd804f]/30 blur-lg"></span>
-                <span className="inline-block text-6xl animate-bounce" style={{ filter: "drop-shadow(0 0 8px #dd804f88)" }}>
-                  <img src="../../images/logoicon.png" alt="logo" className="w-10 h-10 md:w-12 md:h-12" />
+          <div className="relative flex flex-col justify-center items-center h-64 md:h-96 text-center px-4 py-8 md:py-16">
+            {/* Mobile view */}
+            <div className="flex flex-col items-center w-full md:hidden">
+              {/* Logo */}
+              <div className="flex items-center justify-center mb-3">
+                <span className="relative inline-block">
+                  <span className="absolute animate-pulse -top-2 -left-2 w-14 h-14 rounded-full bg-[#dd804f]/30 blur-lg"></span>
+                  <span className="inline-block text-5xl animate-bounce" style={{ filter: "drop-shadow(0 0 8px #dd804f88)" }}>
+                    <img src="../../dist/images/logoicon.png" alt="logo" className="w-16 h-16 pt-2" />
+                  </span>
                 </span>
-              </span>
+              </div>
+              <h1 className="text-3xl font-display font-extrabold mb-5 drop-shadow-lg">
+                <span className="text-white">Welcome to</span>&nbsp;
+                <ShinyText text="Adu Food" className="whitespace-nowrap" />
+              </h1>
+             
+              <div className="flex flex-col gap-2 w-full px-">
+                <button
+                  onClick={scrollToMenu}
+                  className="bg-[#dd804f] hover:bg-[#c9723c] text-white font-semibold px-5 py-2 rounded-xl border-2 border-[#ec9420] hover:border-[#c9723c] transition duration-300 shadow-md"
+                >
+                  Order Now
+                </button>
+                <button
+                  onClick={scrollToMenu}
+                  className=" bg-white/95 hover:bg-white text-gray-900 font-semibold px-4 py-2 rounded-xl border-2 border-[#ec9420] transition duration-300 shadow-md"
+                >
+                  Browse Menu
+                </button>
+              </div>
             </div>
-
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold mb-4 md:mb-6 drop-shadow-lg">
-              <span className="text-white">Welcome to</span>&nbsp;
-              <ShinyText text="Adu Food" className="whitespace-nowrap" />
-            </h1>
-
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 md:mb-8 max-w-3xl text-gray-200 px-2">
-              Experience authentic Ethiopian cuisine and international favorites, delivered fresh to your door.
-            </p>
-
-          
-            {/* Buttons */}
-            <div className="flex justify-center gap-4 flex-wrap mt-2 md:mt-4">
-              <button
-                onClick={scrollToMenu}
-                className="bg-[#dd804f] hover:bg-[#c9723c] text-white font-semibold px-5 py-2.5 md:px-6 md:py-3 rounded-xl border-2 border-[#ec9420] hover:border-[#c9723c] transition transform hover:scale-105 duration-300 shadow-md"
-              >
-                Order Now
-              </button>
-              <button
-                onClick={scrollToMenu}
-                className="bg-white/95 hover:bg-white text-gray-900 font-semibold px-5 py-2.5 md:px-6 md:py-3 rounded-xl border-2 border-[#ec9420] hover:border-[#dd804f] transition transform hover:scale-105 duration-300 shadow-md"
-              >
-                Browse Menu
-              </button>
+            {/* Desktop/Tablet view */}
+            <div className="hidden md:flex flex-col justify-center items-center h-full w-full">
+              {/* AnimatedPlate component */}
+              <div className="flex items-center justify-center mb-4 md:mb-6">
+                <span className="relative inline-block">
+                  <span className="absolute animate-pulse -top-2 -left-2 w-16 h-16 rounded-full bg-[#dd804f]/30 blur-lg"></span>
+                  <span className="inline-block text-6xl animate-bounce" style={{ filter: "drop-shadow(0 0 8px #dd804f88)" }}>
+                    <img src="../../dist/images/logoicon.png" alt="logo" className="w-30 h-20 pt-5" />
+                  </span>
+                </span>
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold mb-4 md:mb-6 drop-shadow-lg">
+                <span className="text-white">Welcome to</span>&nbsp;
+                <ShinyText text="Adu Food" className="whitespace-nowrap" />
+              </h1>
+              <p className="text-lg md:text-xl lg:text-2xl mb-6 md:mb-8 max-w-3xl text-gray-200 px-2">
+                Experience authentic Ethiopian cuisine and international favorites, delivered fresh to your door.
+              </p>
+              {/* Buttons */}
+              <div className="flex justify-center gap-4 flex-wrap mt-2 md:mt-4 mb-8 md:mb-0">
+                <button
+                  onClick={scrollToMenu}
+                  className="bg-[#dd804f] hover:bg-[#c9723c] text-white font-semibold px-6 py-3 rounded-xl border-2 border-[#ec9420] hover:border-[#c9723c] transition transform hover:scale-105 duration-300 shadow-md"
+                >
+                  Order Now
+                </button>
+                <button
+                  onClick={scrollToMenu}
+                  className="bg-white/95 hover:bg-white text-gray-900 font-semibold px-6 py-3 rounded-xl border-2 border-[#ec9420] transition transform hover:scale-105 duration-300 shadow-md"
+                >
+                  Browse Menu
+                </button>
+              </div>
             </div>
-
-          
           </div>
         </section>
 
         {/* SEARCH & FILTER */}
         <section
           ref={menuRef}
-          className="bg-gray-800/70 rounded-xl shadow-lg p-4 md:p-6 mb-10 border border-gray-700 relative z-10"
+          className="bg-gray-800/70 rounded-xl shadow-lg p-4 md:p-6 mb-10 border border-gray-700 relative z-10 mt-8 md:mt-12"
         >
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Search Bar */}
