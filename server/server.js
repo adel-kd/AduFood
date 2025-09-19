@@ -27,10 +27,10 @@ app.use((req, _res, next) => {
   next();
 });
 
-// ✅ CORS – allow ONLY your deployed frontend
+
 app.use(
   cors({
-    origin: 'https://adu-food-gsv5.vercel.app', // ← exact match, no trailing slash
+    origin: 'https://adu-food-gsv5.vercel.app/', 
     credentials: true,
   })
 );
@@ -65,7 +65,7 @@ mongoose
     console.log('✅ MongoDB connected');
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`✅ CORS allowed origin: https://adu-food-gsv5.vercel.app`);
+      console.log(`✅ CORS allowed origin: https://adu-food-gsv5.vercel.app/`);
     });
   })
   .catch((err) => {
