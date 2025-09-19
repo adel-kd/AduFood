@@ -4,7 +4,7 @@ import { getToken } from '../utils/auth.js'
 // Use environment variable for baseURL if available, fallback to localhost for dev
 const baseURL =
   import.meta.env.VITE_API_BASE_URL ||
-  'https://adufoods-1.onrender.com/api' // fallback for local dev
+  'https://http://localhost:5000/api' // fallback for local dev
 
 const instance = axios.create({
   baseURL,
