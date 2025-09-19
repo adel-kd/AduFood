@@ -10,12 +10,11 @@ export default function Navbar() {
   const { cartItems } = useContext(CartContext);
   const [open, setOpen] = useState(false);
 
-  // Dropdown state for greeting/profile
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  // Close dropdown on outside click
+  
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -42,7 +41,7 @@ export default function Navbar() {
     <nav className="bg-gray-800/95 backdrop-blur border-b border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo + Mobile toggle */}
+        
           <div className="flex items-center gap-3">
             <button
               className="sm:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:bg-primary-500/10 hover:text-primary-400"
@@ -52,7 +51,7 @@ export default function Navbar() {
               <Menu className="h-6 w-6" />
             </button>
             <Link to="/" className="flex items-center gap-2">
-              <img src="../../dist/images/fulllogo.png" alt="logo" className="w-30 h-10 pt-2" />
+              <img src="/images/fulllogo.png" alt="logo" className="w-30 h-10 pt-2" />
             </Link>
           </div>
 

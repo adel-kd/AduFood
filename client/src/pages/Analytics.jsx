@@ -220,8 +220,8 @@ export default function Analytics() {
         {(analytics?.topFoods || []).slice(0, 3).map((entry, index) => (
           <text
             key={`label-${index}`}
-            x={index * (100 / 3) + (100 / 3 / 2)} // Center of the bar
-            y={250} // Position below the chart
+            x={index * (100 / 3) + (100 / 3 / 2)} 
+            y={250} 
             textAnchor="middle"
             dominantBaseline="middle"
             style={{ fill: '#222', fontSize: '12px' }}

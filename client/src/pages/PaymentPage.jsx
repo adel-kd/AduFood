@@ -106,7 +106,6 @@ export default function PaymentPage() {
     try {
       const selectedAddress = addresses.find(a => a._id === formData.addressId);
 
-      // 1️⃣ Simulate payment
       const { data } = await initializeMockTransaction({
         amount,
         email: user.email,
@@ -119,7 +118,6 @@ export default function PaymentPage() {
       });
       if (!data?.success) throw new Error('Payment failed');
 
-      // 2️⃣ Create order in backend
       await placeOrder({
         items: cartItems.map(item => ({
           food: item._id,

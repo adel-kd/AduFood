@@ -1,4 +1,4 @@
-// Mock transaction API - no real Chapa integration
+// Mock transaction API 
 export const initializeMockTransaction = async (transactionData) => {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 2000));
@@ -10,8 +10,7 @@ export const initializeMockTransaction = async (transactionData) => {
     last_name,
     phone_number,
     payment_method,
-    delivery_address, // Added delivery address
-    cartItems,
+    delivery_address, 
     orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   } = transactionData;
 
@@ -23,7 +22,7 @@ export const initializeMockTransaction = async (transactionData) => {
     throw new Error('Invalid test number for selected payment method');
   }
 
-  // Validate delivery address if required
+ 
   if (!delivery_address) {
     throw new Error('Delivery address is required');
   }
@@ -62,7 +61,7 @@ export const initializeMockTransaction = async (transactionData) => {
         order_details: {
           total_items: totalItems,
           items: itemDescription,
-          cart_items: cartItems // Include full cart items for record
+          cart_items: cartItems 
         },
         timestamp: new Date().toISOString()
       }
@@ -88,11 +87,11 @@ export const verifyMockTransaction = async (orderId) => {
   };
 };
 
-// Additional function to get transaction history (optional)
+
 export const getMockTransactionHistory = async (email) => {
   await new Promise(resolve => setTimeout(resolve, 1500));
   
-  // This would typically fetch from a database
+
   return {
     data: {
       transactions: [
@@ -102,7 +101,7 @@ export const getMockTransactionHistory = async (email) => {
           currency: 'ETB',
           status: 'success',
           payment_method: 'telebirr',
-          timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+          timestamp: new Date(Date.now() - 86400000).toISOString(), 
           items: ['2x Burger', '1x Fries']
         }
       ]

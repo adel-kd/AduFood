@@ -52,11 +52,9 @@ export default function Cart() {
     }
   }
 
-  // Instead of placing the order here, just go to payment page with cart info
   const handleProceedToPayment = () => {
     if (cartItems.length === 0) return
     setProceeding(true)
-    // Pass cart items and total price to payment page
     navigate('/payment', {
       state: {
         cartItems: cartItems,

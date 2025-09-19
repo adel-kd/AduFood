@@ -81,7 +81,8 @@ const Home = () => {
                 <span className="relative inline-block">
                   <span className="absolute animate-pulse -top-2 -left-2 w-14 h-14 rounded-full bg-[#dd804f]/30 blur-lg"></span>
                   <span className="inline-block text-5xl animate-bounce" style={{ filter: "drop-shadow(0 0 8px #dd804f88)" }}>
-                    <img src="../../dist/images/logoicon.png" alt="logo" className="w-16 h-16 pt-2" />
+             
+                    <img src="/images/logoicon.png" alt="logo" className="w-16 h-16 pt-2" />
                   </span>
                 </span>
               </div>
@@ -89,7 +90,6 @@ const Home = () => {
                 <span className="text-white">Welcome to</span>&nbsp;
                 <ShinyText text="Adu Food" className="whitespace-nowrap" />
               </h1>
-             
               <div className="flex flex-col gap-2 w-full px-">
                 <button
                   onClick={scrollToMenu}
@@ -112,7 +112,7 @@ const Home = () => {
                 <span className="relative inline-block">
                   <span className="absolute animate-pulse -top-2 -left-2 w-16 h-16 rounded-full bg-[#dd804f]/30 blur-lg"></span>
                   <span className="inline-block text-6xl animate-bounce" style={{ filter: "drop-shadow(0 0 8px #dd804f88)" }}>
-                    <img src="../../dist/images/logoicon.png" alt="logo" className="w-30 h-20 pt-5" />
+                    <img src="/images/logoicon.png" alt="logo" className="w-30 h-20 pt-5" />
                   </span>
                 </span>
               </div>

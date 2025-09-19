@@ -24,14 +24,13 @@ export default function FoodDetail() {
   const [reviewForm, setReviewForm] = useState({ 
     rating: 0, 
     comment: '', 
-    showName: true // Default to showing name
+    showName: true 
   })
   const [editingReviewId, setEditingReviewId] = useState(null)
 
   useEffect(() => {
     fetchFood()
     fetchReviews()
-    // eslint-disable-next-line
   }, [id])
 
   const fetchFood = async () => {
@@ -114,8 +113,8 @@ export default function FoodDetail() {
       setReviewForm({ rating: 0, comment: '', showName: true })
       setShowReviewForm(false)
       setEditingReviewId(null)
-      fetchFood() // Refresh food data to get updated rating
-      fetchReviews() // Refresh reviews list
+      fetchFood() 
+      fetchReviews() 
     } catch (error) {
       console.error('Error submitting review:', error)
       alert(error.response?.data?.message || 'Failed to submit review')
@@ -129,8 +128,8 @@ export default function FoodDetail() {
       setShowReviewForm(false)
       setReviewForm({ rating: 0, comment: '', showName: true })
       setEditingReviewId(null)
-      fetchFood() // Refresh food data to get updated rating
-      fetchReviews() // Refresh reviews list
+      fetchFood() 
+      fetchReviews() 
     } catch (error) {
       console.error('Error deleting review:', error)
       alert('Failed to delete review')
@@ -170,7 +169,7 @@ export default function FoodDetail() {
 
   const handleImageError = (e) => {
     e.target.src = '/image-not-found.png'
-    e.target.onerror = null // Prevent infinite loop
+    e.target.onerror = null 
     e.target.className = 'w-full h-96 object-contain rounded-xl bg-gray-100 p-8'
   }
 
@@ -284,7 +283,6 @@ export default function FoodDetail() {
         <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
           <h2 className="text-2xl font-bold text-gray-900">Reviews & Ratings</h2>
 
-          {/* Show Write Review button only if user exists and hasn't reviewed yet */}
           {user && !userReview && (
             <button
               onClick={() => setShowReviewForm(true)}
@@ -295,7 +293,6 @@ export default function FoodDetail() {
             </button>
           )}
 
-          {/* If user has a review, show Edit and Delete buttons here */}
           {user && userReview && !showReviewForm && (
             <div className="flex gap-2">
               <button

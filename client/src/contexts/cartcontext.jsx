@@ -39,20 +39,15 @@ export function CartProvider({ children }) {
     }
   }
 
-  // NEW FUNCTION: Get quantity for a specific food item in orders
   const getOrderItemQuantity = (orderItem) => {
-    // First try the most common field names
     if (orderItem.qty !== undefined && orderItem.qty !== null) return orderItem.qty;
     if (orderItem.quantity !== undefined && orderItem.quantity !== null) return orderItem.quantity;
     
-    // If we have the food object with quantity (from cart context)
     if (orderItem.food && orderItem.food.quantity) return orderItem.food.quantity;
     
-    // Fallback: check if we have this item in current cart for reference
     const cartItem = cartItems.find(item => item._id === orderItem.food?._id);
     if (cartItem) return cartItem.quantity;
     
-    // Final fallback
     return 1;
   }
 

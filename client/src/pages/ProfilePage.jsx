@@ -41,7 +41,7 @@ const ProfilePage = () => {
   const handleAddAddress = async (addressData) => {
     try {
       await addAddress(addressData);
-      fetchAddresses(); // Refresh addresses
+      fetchAddresses(); 
       setShowForm(false);
       setFormData({
         name: '',
@@ -81,7 +81,7 @@ const ProfilePage = () => {
     if (window.confirm('Are you sure you want to delete this address?')) {
       try {
         await deleteAddress(addressId);
-        fetchAddresses(); // Refresh addresses
+        fetchAddresses(); 
       } catch (error) {
         console.error('Error deleting address:', error);
       }
@@ -91,7 +91,7 @@ const ProfilePage = () => {
   const handleSetDefault = async (addressId) => {
     try {
       await setDefaultAddress(addressId);
-      fetchAddresses(); // Refresh addresses
+      fetchAddresses(); 
     } catch (error) {
       console.error('Error setting default address:', error);
     }

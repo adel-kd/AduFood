@@ -17,7 +17,6 @@ const Order = () => {
     }
   };
 
-  // Status color (text only, no background)
   const getStatusColor = (status) => {
     switch (status) {
       case 'Pending': return 'text-amber-500 font-semibold';

@@ -5,7 +5,6 @@ import mongoose from 'mongoose'
 
 
 
-// Helper for preview: render stars (from FoodCard)
 const renderStars = (rating) => {
   const stars = []
   const fullStars = Math.floor(rating)
@@ -44,7 +43,6 @@ export default function AddOrEditFood() {
   const [fetching, setFetching] = useState(isEdit)
   const [imageError, setImageError] = useState(false)
 
-  // For preview tilt effect
   const previewCardRef = useRef(null)
   const rotateAmplitude = 12
   const scaleOnHover = 1.05
@@ -66,7 +64,6 @@ export default function AddOrEditFood() {
 
   useEffect(() => {
     if (isEdit) fetchFood()
-    // eslint-disable-next-line
   }, [id])
 
   const fetchFood = async () => {
@@ -170,7 +167,6 @@ export default function AddOrEditFood() {
                   backgroundColor: '#fff'
                 }}
                 onFocus={e => e.target.style.borderColor = '#dd804f'}
-                // onBlur={e => e.target.style.borderColor = '#e5e7eb'}
               />
             </div>
 
@@ -190,7 +186,6 @@ export default function AddOrEditFood() {
                   backgroundColor: '#fff'
                 }}
                 onFocus={e => e.target.style.borderColor = '#dd804f'}
-                // onBlur={e => e.target.style.borderColor = '#e5e7eb'}
               />
             </div>
 
@@ -212,7 +207,6 @@ export default function AddOrEditFood() {
                   backgroundColor: '#fff'
                 }}
                 onFocus={e => e.target.style.borderColor = '#dd804f'}
-                // onBlur={e => e.target.style.borderColor = '#e5e7eb'}
               />
             </div>
 
@@ -230,7 +224,6 @@ export default function AddOrEditFood() {
                   backgroundColor: '#fff'
                 }}
                 onFocus={e => e.target.style.borderColor = '#dd804f'}
-                // onBlur={e => e.target.style.borderColor = '#e5e7eb'}
               >
                 <option value="">Select category</option>
                 <option value="burger">🍔 Burger</option>
@@ -258,14 +251,12 @@ export default function AddOrEditFood() {
                   backgroundColor: '#fff'
                 }}
                 onFocus={e => e.target.style.borderColor = '#dd804f'}
-                // onBlur={e => e.target.style.borderColor = '#e5e7eb'}
               />
               <p className="text-sm mt-1" style={{ color: '#888' }}>Optional: Add an image URL for the food item</p>
             </div>
           </div>
         </div>
 
-        {/* Preview Box */}
         {form.name && (
           <div className="bg-transparent rounded-xl shadow-none p-0">
             <h2 className="text-xl font-semibold mb-4" style={{ color: '#fff' }}>Preview</h2>
@@ -292,7 +283,6 @@ export default function AddOrEditFood() {
                     />
                   )}
 
-                  {/* Category Badge */}
                   <div className="absolute top-3 left-3">
                     <span className="bg-primary-500 text-white px-3 py-1 rounded-full text-xs font-medium">
                       {form.category || 'Food'}
@@ -308,7 +298,6 @@ export default function AddOrEditFood() {
                   <p className="text-gray-300 text-sm mb-3 line-clamp-2">
                     {form.description}
                   </p>
-                  {/* Rating (static for preview) */}
                   <div className="flex items-center gap-2 mb-3">
                     <div className="flex">
                       {renderStars(0)}
@@ -317,7 +306,6 @@ export default function AddOrEditFood() {
                       (0 reviews)
                     </span>
                   </div>
-                  {/* Price and Actions */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       <span className="text-2xl font-bold text-primary-400">
@@ -342,7 +330,6 @@ export default function AddOrEditFood() {
           </div>
         )}
 
-        {/* Actions */}
         <div className="flex items-center justify-end gap-4">
           <button
             type="button"

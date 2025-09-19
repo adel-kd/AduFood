@@ -4,7 +4,7 @@ import { setToken, getToken, clearToken } from '../utils/auth.js'
 
 export const AuthContext = createContext()
 
-// Add this custom hook to use the AuthContext
+
 export const useAuth = () => {
   const context = useContext(AuthContext)
   if (!context) {
@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
         setUser(JSON.parse(userData))
       }
     }
-    setLoading(false) // Done checking
+    setLoading(false) 
   }, [])
 
   const loginUser = async (data) => {

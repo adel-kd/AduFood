@@ -36,7 +36,6 @@ export default function AdminDashboard() {
     }
   }
 
-  // Not used in this file, but kept for possible future use
   const getStatusColor = (status) => {
     switch (status) {
       case 'Pending':
