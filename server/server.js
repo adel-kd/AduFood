@@ -20,20 +20,16 @@ import addressRoutes from './routes/addressRoutes.js';
 const app = express();
 
 // ===== MIDDLEWARE ===== //
-
-// Log requests
 app.use((req, _res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   next();
 });
 
-
-app.use(
-  cors({
-    origin: 'https://adu-food-gsv5.vercel.app/', 
-    credentials: true,
-  })
-);
+// ✅ Open to all origins, no credentials
+app.use(cors({
+  origin: '*',
+  credentials: false
+}));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -65,7 +61,7 @@ mongoose
     console.log('✅ MongoDB connected');
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`✅ CORS allowed origin: https://adu-food-gsv5.vercel.app/`);
+      console.log(`✅ CORS is open to all origins, no credentials`);
     });
   })
   .catch((err) => {
