@@ -4,9 +4,12 @@ A full-stack MERN food delivery platform built for the Ethiopian market, featuri
 
 ##  Live Demo
 
-Frontend: *(Add your deployed frontend URL here)*
-Backend API: *(Add your deployed backend URL here)*
+https://adu-food.netlify.app/
 
+BACKEND_URL=https://adufood-1.onrender.com/api
+---
+##   Demo vedio
+https://res.cloudinary.com/ddntf1cdt/video/upload/v1783115897/Screencast_from_2026-07-03_16-34-57_m6ogrp.webm
 ---
 
 ## 📌 Features
@@ -21,6 +24,7 @@ Backend API: *(Add your deployed backend URL here)*
 * Save multiple delivery addresses
 * Checkout with secure payment via Chapa
 * View order history
+* Ratings and reviews
 * Promo code support
 * Responsive mobile-friendly UI
 
@@ -166,18 +170,9 @@ npm run dev
 
 ---
 
-## 📸 Screenshots
 
-Add screenshots here:
 
-* Home page
-* Food listing
-* Cart page
-* Checkout page
-* Orders page
-* Admin dashboard
 
----
 
 ## 🔒 Security
 
@@ -199,7 +194,6 @@ Built specifically for Ethiopian food delivery businesses and local restaurant e
 * Real-time order tracking
 * Driver management
 * Push notifications
-* Ratings and reviews
 * AI food recommendations
 * Multi-vendor support
 
@@ -210,7 +204,7 @@ Built specifically for Ethiopian food delivery businesses and local restaurant e
 **Adel Kedir**
 
 GitHub: https://github.com/adel-kd
-LinkedIn: *(Add your LinkedIn)*
+LinkedIn:https://www.linkedin.com/in/adel-kedir971/
 
 ---
 

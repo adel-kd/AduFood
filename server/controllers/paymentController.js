@@ -119,10 +119,10 @@ export const initializePaymentHandler = async (req, res) => {
     });
 
     const backendUrl =
-      process.env.BACKEND_URL || "http://localhost:5000";
+      process.env.BACKEND_URL || "https://adufood-backend.onrender.com/api";
 
     const frontendUrl =
-      process.env.FRONTEND_URL || "http://localhost:3000";
+      process.env.FRONTEND_URL || "https://adu-food.netlify.app/";
 
     const chapaPayload = {
       amount: String(total),

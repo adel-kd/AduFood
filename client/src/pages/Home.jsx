@@ -12,7 +12,8 @@ import {
 import { AuthContext } from "../contexts/authcontext.jsx";
 
 const HERO_IMAGE_URL =
-  "https://res.cloudinary.com/ddntf1cdt/image/upload/v1783021601/image.png_202607022235_zmaj7w.jpg";
+  "https://res.cloudinary.com/ddntf1cdt/image/upload/v1783117227/Gemini_Generated_Image_70ndnn70ndnn70nd_crqt6r.png";
+
 
 const Home = () => {
   const { user } = useContext(AuthContext);
@@ -80,7 +81,67 @@ const Home = () => {
     "rotate(6deg) translate(130px)",
     "rotate(12deg) translate(260px)",
   ];
+  const ClientTestimonialBox = () => {
+    const [text, setText] = useState("");
+    const [rating, setRating] = useState(0);
+    const [submitted, setSubmitted] = useState(false);
 
+    const handleSubmit = (e) => {
+      e.preventDefault();
+
+      setSubmitted(true);
+
+      setTimeout(() => {
+        setSubmitted(false);
+        setText("");
+        setRating(0);
+      }, 2500);
+    };
+
+    return (
+      <form onSubmit={handleSubmit} className="flex flex-col h-full">
+        <p className="font-semibold mb-2">Share your experience</p>
+
+        {/* Star rating */}
+        <div className="flex gap-1 mb-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Star
+              key={i}
+              onClick={() => setRating(i + 1)}
+              className={`w-5 h-5 cursor-pointer transition ${i < rating
+                ? "fill-yellow-400 text-yellow-400"
+                : "text-gray-300"
+                }`}
+            />
+          ))}
+        </div>
+
+        {/* Textarea */}
+        <textarea
+          rows={4}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Write your feedback..."
+          className="w-full border rounded-lg p-3 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-[#dd804f]"
+        />
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={!text || rating === 0}
+          className="bg-[#dd804f] text-white py-2 rounded-lg font-medium hover:opacity-90 disabled:opacity-50 transition"
+        >
+          Submit
+        </button>
+
+        {submitted && (
+          <p className="text-green-600 text-sm mt-3 animate-pulse">
+            Thanks for your feedback! 🎉
+          </p>
+        )}
+      </form>
+    );
+  };
   // ─────────────────────────────
   // FETCH FOODS
   // ─────────────────────────────
@@ -128,91 +189,92 @@ const Home = () => {
     <div className="w-full bg-white overflow-x-hidden">
 
       {/* ANNOUNCEMENT */}
-      <div className="w-full bg-[#1F1B18] text-white text-center py-2 text-xs sm:text-sm">
+      <div className="w-full bg-[#1F1B18] text-white text-center py-2 text-sm">
         Free delivery on your first order — Use code ADUFIRST
       </div>
 
       {/* ───────────────── HERO ───────────────── */}
       <section
-        className="relative min-h-[85vh] md:min-h-screen bg-cover bg-center overflow-hidden"
+        className="relative min-h-screen bg-fit bg-center overflow-hidden animate-zoomHero"
         style={{
           backgroundImage: `url(${HERO_IMAGE_URL})`,
-          backgroundPosition: "center 30%",
+          backgroundPosition: "center",
+          backgroundSize: "cover",
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20" />
 
-        {/* blur effects hidden on mobile */}
+        {/* blur effects */}
         <div className="hidden md:block absolute top-20 right-20 w-80 h-80 bg-[#dd804f]/20 blur-3xl rounded-full animate-pulse" />
         <div className="hidden md:block absolute bottom-20 right-40 w-96 h-96 bg-orange-400/10 blur-3xl rounded-full animate-pulse" />
 
-        <div className="relative z-10 flex items-center min-h-[85vh] md:min-h-screen px-4 sm:px-6 md:px-20">
-          <div className="max-w-xl w-full">
+        <div className="relative z-10 min-h-screen flex items-center px-4 sm:px-6 md:px-20">
 
-            {/* TITLE */}
-            <h1 className="text-5xl sm:text-6xl md:text-[7rem] font-black leading-none mb-6 text-white">
-              Adu<span className="text-[#dd804f]">Food</span>
+          <div className="max-w-xl">
+
+            {/* TITLE (animation restored) */}
+            <h1 className="text-5xl sm:text-6xl md:text-[7.5rem] font-black leading-none mb-6 opacity-0 animate-slideLeft">
+              <span className="text-white">Adu</span>
+              <span className="text-[#dd804f]">Food</span>
             </h1>
 
             {/* DESCRIPTION */}
-            <p className="text-white text-sm sm:text-base md:text-xl mb-8 leading-relaxed">
+            <p className="text-white text-base md:text-xl mb-8 opacity-0 animate-slideLeft [animation-delay:0.3s]">
               Experience authentic Ethiopian cuisine and international favorites,
               delivered fresh and hot to your doorstep.
             </p>
 
             {/* BUTTONS */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 mb-8 opacity-0 animate-slideLeft [animation-delay:0.6s]">
               <button
                 onClick={scrollToMenu}
-                className="bg-[#dd804f] text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold hover:scale-105 transition"
+                className="bg-[#dd804f] px-6 py-3 md:px-8 md:py-4 rounded-full text-white font-semibold hover:scale-105 transition"
               >
                 Order Now
               </button>
 
               <button
                 onClick={scrollToMenu}
-                className="bg-white/20 backdrop-blur-md border border-white text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold hover:bg-white hover:text-black transition"
+                className="bg-white/20 border border-white text-white px-6 py-3 md:px-8 md:py-4 rounded-full hover:bg-white hover:text-black transition"
               >
                 Browse Menu
               </button>
             </div>
-
+            <br /><br />
             {/* STATS */}
-            <div className="flex flex-wrap gap-3 text-xs sm:text-sm md:text-base">
-              <div className="px-3 py-2 bg-white/10 rounded-full text-white">
-                ⭐ 4.9 Rating
-              </div>
-              <div className="px-3 py-2 bg-white/10 rounded-full text-white">
-                🚚 30 min delivery
-              </div>
-              <div className="px-3 py-2 bg-white/10 rounded-full text-white">
-                🔒 Safe checkout
-              </div>
+            <div className="flex flex-wrap gap-3 text-white opacity-0 animate-slideLeft [animation-delay:0.9s]">
+              <div className="">⭐ 4.9 Rating</div>&nbsp; &nbsp;
+              <div className="">🚚 30 min delivery</div>&nbsp; &nbsp;
+              <div className="">🔒 Safe checkout</div>&nbsp; &nbsp;
             </div>
 
           </div>
         </div>
       </section>
 
-      {/* ───────────────── CATEGORIES ───────────────── */}
-      <section className="overflow-hidden px-4">
+      {/* ───────────────── CATEGORIES (FIXED SCALE) ───────────────── */}
+      <section className="overflow-hidden px-2 sm:px-4">
+
         <div className="text-center mb-10 md:mb-14">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold pt-10 md:pt-20">
             Popular Categories
           </h2>
         </div>
 
-        <div className="flex justify-center scale-[0.85] sm:scale-100">
-          <BounceCards
-            items={categories}
-            containerWidth={1100}
-            containerHeight={380}
-            animationDelay={0.2}
-            animationStagger={0.1}
-            transformStyles={categoryTransforms}
-            onCategoryClick={goToCategory}
-          />
+        <div className="flex justify-center w-full overflow-hidden">
+          <div className="scale-[0.6] sm:scale-[0.75] md:scale-100 origin-center">
+            <BounceCards
+              items={categories}
+              containerWidth={1100}
+              containerHeight={380}
+              animationDelay={0.2}
+              animationStagger={0.1}
+              transformStyles={categoryTransforms}
+              onCategoryClick={goToCategory}
+            />
+          </div>
         </div>
+
       </section>
 
       {/* ───────────────── SEARCH + MENU ───────────────── */}
@@ -260,6 +322,7 @@ const Home = () => {
             ))}
           </div>
         )}
+
       </section>
 
       {/* ───────────────── FEATURES ───────────────── */}
@@ -269,10 +332,7 @@ const Home = () => {
           { icon: <Flame />, title: "Fresh daily" },
           { icon: <ShieldCheck />, title: "Secure checkout" },
         ].map((item) => (
-          <div
-            key={item.title}
-            className="bg-gray-50 rounded-xl p-6 md:p-8 text-center"
-          >
+          <div key={item.title} className="bg-gray-50 rounded-xl p-6 text-center">
             <div className="flex justify-center mb-4 text-[#dd804f]">
               {item.icon}
             </div>
@@ -288,8 +348,10 @@ const Home = () => {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+
+          {/* ───── EXISTING TESTIMONIALS ───── */}
           {testimonials.map((t) => (
-            <div key={t.name} className="border rounded-xl p-6 shadow-sm">
+            <div key={t.name} className="border rounded-xl p-6 shadow-sm bg-white">
               <div className="flex mb-3">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
@@ -303,6 +365,29 @@ const Home = () => {
               <h4 className="font-bold">{t.name}</h4>
             </div>
           ))}
+
+          {/* ───── CLIENT INPUT CARD (NEW 4TH CARD) ───── */}
+          <div className="border rounded-xl p-6 shadow-sm bg-[#dd804f]/5 border-dashed border-[#dd804f]/30">
+
+            {user ? (
+              <ClientTestimonialBox />
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <p className="text-gray-700 mb-4 font-medium">
+                  Login to share your experience
+                </p>
+
+                <a
+                  href="/login"
+                  className="bg-[#dd804f] text-white px-4 py-2 rounded-lg hover:opacity-90 transition"
+                >
+                  Login
+                </a>
+              </div>
+            )}
+
+          </div>
+
         </div>
       </section>
 
@@ -313,7 +398,7 @@ const Home = () => {
           Get 15% off your next order
         </h2>
 
-        <p className="text-gray-300 mb-6 text-sm md:text-base">
+        <p className="text-gray-300 mb-6">
           Join our list for exclusive offers.
         </p>
 
@@ -338,6 +423,7 @@ const Home = () => {
         {newsletterSubmitted && (
           <p className="mt-4 text-green-400">🎉 You're subscribed!</p>
         )}
+
       </section>
 
     </div>
