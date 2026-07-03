@@ -8,11 +8,15 @@ import {
 } from "../service/chapaService.js";
 
 /**
+ * ─────────────────────────────────────────────
  * VERIFY + UPDATE ORDER
+ * ─────────────────────────────────────────────
  */
 const verifyAndUpdateOrder = async (txRef) => {
-  const { status: chapaStatus, data: chapaData } =
-    await verifyPayment(txRef);
+  const res = await verifyPayment(txRef);
+
+  const chapaStatus = res?.status || res?.data?.status || "failed";
+  const chapaData = res?.data || {};
 
   const order = await Order.findOne({ txRef });
 
@@ -23,14 +27,14 @@ const verifyAndUpdateOrder = async (txRef) => {
   if (chapaStatus === "success") {
     order.status = "Confirmed";
 
-    // clear cart
+    // clear cart safely
     await Cart.findOneAndUpdate(
       { user: order.user },
       { $set: { items: [] } }
     );
+  }
 
-    order.promoCode = null;
-  } else if (chapaStatus === "failed") {
+  if (chapaStatus === "failed") {
     order.status = "Cancelled";
   }
 
@@ -43,7 +47,9 @@ const verifyAndUpdateOrder = async (txRef) => {
     {
       status: chapaStatus,
       chapaVerifiedRef:
-        chapaData?.reference || chapaData?.id || null,
+        chapaData?.reference ||
+        chapaData?.id ||
+        null,
     }
   );
 
@@ -51,21 +57,30 @@ const verifyAndUpdateOrder = async (txRef) => {
 };
 
 /**
+ * ─────────────────────────────────────────────
  * INIT PAYMENT
+ * ─────────────────────────────────────────────
  */
 export const initializePaymentHandler = async (req, res) => {
   try {
-    const { items, phone, promoCode, discountAmount, deliveryFee } = req.body;
+    const { items, phone, promoCode, discountAmount, deliveryFee } =
+      req.body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: "No order items provided" });
     }
 
-    const total = items.reduce((sum, item) => {
-      return sum + (Number(item.price) || 0) * (Number(item.qty) || 1);
-    }, 0);
+    const total = items.reduce(
+      (sum, item) =>
+        sum + (Number(item.price) || 0) * (Number(item.qty) || 1),
+      0
+    );
 
-    const finalEmail = req.user?.email || "guest@adufood.com";
+    if (total <= 0) {
+      return res.status(400).json({ message: "Invalid payment amount" });
+    }
+
+    const email = req.user?.email || "guest@adufood.com";
     const userName = req.user?.name || "Customer User";
 
     const firstName = userName.split(" ")[0] || "Customer";
@@ -73,13 +88,13 @@ export const initializePaymentHandler = async (req, res) => {
 
     const txRef = `ADU-${uuidv4()}`;
 
-    // 🔥 FIXED: correct schema mapping
     const formattedItems = items.map((item) => ({
-      food: item.food?._id || item.food,
-      qty: item.qty || item.quantity || 1,
+      food: item.food,
+      qty: item.qty || 1,
       price: item.price || 0,
     }));
 
+    // CREATE ORDER
     const order = await Order.create({
       user: req.user._id,
       items: formattedItems,
@@ -91,12 +106,13 @@ export const initializePaymentHandler = async (req, res) => {
       txRef,
     });
 
+    // CREATE TRANSACTION
     await Transaction.create({
       orderId: order._id,
       userId: req.user._id,
       amount: total,
       currency: "ETB",
-      email: finalEmail,
+      email,
       phone: phone || null,
       chapaReference: txRef,
       status: "pending",
@@ -106,18 +122,18 @@ export const initializePaymentHandler = async (req, res) => {
       process.env.BACKEND_URL || "http://localhost:5000";
 
     const frontendUrl =
-      process.env.FRONTEND_URL;
+      process.env.FRONTEND_URL || "http://localhost:3000";
 
     const chapaPayload = {
-      amount: total.toString(),
+      amount: String(total),
       currency: "ETB",
-      email: finalEmail,
+      email,
       first_name: firstName,
       last_name: lastName,
       tx_ref: txRef,
 
       callback_url: `${backendUrl}/api/payment/callback?tx_ref=${txRef}`,
-      return_url: `${frontendUrl}/orders?tx_ref=${txRef}`,
+      return_url: `${frontendUrl}/payment/result?tx_ref=${txRef}`,
 
       customization: {
         title: "AduFood",
@@ -136,9 +152,10 @@ export const initializePaymentHandler = async (req, res) => {
       message: "Payment initialized",
       checkoutUrl,
       txRef,
+      orderId: order._id,
     });
   } catch (err) {
-    console.error("🔥 INIT ERROR:", err.response?.data || err.message);
+    console.error("INIT ERROR:", err.response?.data || err.message);
 
     return res.status(500).json({
       message: "Failed to initialize payment",
@@ -148,19 +165,21 @@ export const initializePaymentHandler = async (req, res) => {
 };
 
 /**
+ * ─────────────────────────────────────────────
  * CALLBACK
+ * ─────────────────────────────────────────────
  */
 export const chapaCallbackHandler = async (req, res) => {
   try {
     const { tx_ref } = req.query;
 
-    const { chapaStatus, order } =
+    const { order, chapaStatus } =
       await verifyAndUpdateOrder(tx_ref);
 
     return res.json({
       message: "Callback processed",
-      status: chapaStatus,
       orderId: order._id,
+      status: chapaStatus,
     });
   } catch (err) {
     return res.status(500).json({
@@ -171,37 +190,44 @@ export const chapaCallbackHandler = async (req, res) => {
 };
 
 /**
+ * ─────────────────────────────────────────────
  * WEBHOOK
+ * ─────────────────────────────────────────────
  */
 export const chapaWebhookHandler = async (req, res) => {
   try {
     const txRef =
       req.body?.tx_ref || req.body?.data?.tx_ref;
 
-    if (!txRef) throw new Error("Missing tx_ref");
+    if (!txRef) return res.status(200).json({ message: "No txRef" });
 
     await verifyAndUpdateOrder(txRef);
 
     return res.json({ message: "Webhook processed" });
   } catch (err) {
     return res.status(200).json({
-      message: "Webhook received (failed processing)",
+      message: "Webhook failed but acknowledged",
     });
   }
 };
 
 /**
+ * ─────────────────────────────────────────────
  * MANUAL VERIFY
+ * ─────────────────────────────────────────────
  */
 export const manualVerifyHandler = async (req, res) => {
   try {
     const { txRef } = req.params;
 
-    const { chapaStatus, order } =
+    const { order, chapaStatus } =
       await verifyAndUpdateOrder(txRef);
 
     return res.json({
-      message: chapaStatus,
+      message:
+        chapaStatus === "success"
+          ? "Payment verified"
+          : `Status: ${chapaStatus}`,
       orderId: order._id,
       orderStatus: order.status,
     });
