@@ -132,27 +132,33 @@ const Home = () => {
 
       {/* HERO */}
       <section
-        className="relative min-h-screen bg-cover bg-center overflow-hidden animate-[zoomHero_10s_ease-in-out_infinite_alternate]"
+        className="relative min-h-screen bg-cover bg-center overflow-hidden animate-zoomHero"
         style={{ backgroundImage: `url(${HERO_IMAGE_URL})` }}
       >
+        {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
 
-        <div className="absolute top-20 right-20 w-80 h-80 bg-[#dd804f]/20 blur-3xl rounded-full" />
-        <div className="absolute bottom-20 right-40 w-96 h-96 bg-orange-400/10 blur-3xl rounded-full" />
+        {/* Blur effects */}
+        <div className="absolute top-20 right-20 w-80 h-80 bg-[#dd804f]/20 blur-3xl rounded-full animate-pulse" />
+        <div className="absolute bottom-20 right-40 w-96 h-96 bg-orange-400/10 blur-3xl rounded-full animate-pulse" />
 
         <div className="relative z-10 min-h-screen flex items-center px-6 md:px-20">
           <div className="max-w-xl">
-            <h1 className="text-[4rem] md:text-[7.5rem] font-black leading-none mb-6">
+
+            {/* Title */}
+            <h1 className="text-[4rem] md:text-[7.5rem] font-black leading-none mb-6 opacity-0 animate-slideLeft">
               <span className="text-white">Adu</span>
               <span className="text-[#dd804f]">Food</span>
             </h1>
 
-            <p className="text-white text-lg md:text-xl mb-8 leading-relaxed">
+            {/* Description */}
+            <p className="text-white text-lg md:text-xl mb-8 leading-relaxed opacity-0 animate-slideLeft [animation-delay:0.3s]">
               Experience authentic Ethiopian cuisine and international favorites,
               delivered fresh and hot to your doorstep.
             </p>
 
-            <div className="flex gap-4 mb-8">
+            {/* Buttons */}
+            <div className="flex gap-4 mb-8 opacity-0 animate-slideLeft [animation-delay:0.6s]">
               <button
                 onClick={scrollToMenu}
                 className="bg-[#dd804f] text-white px-8 py-4 rounded-full font-semibold hover:scale-110 hover:shadow-xl active:scale-95 transition-all duration-300"
@@ -168,7 +174,8 @@ const Home = () => {
               </button>
             </div>
 
-            <div className="flex flex-wrap gap-4">
+            {/* Stats */}
+            <div className="flex flex-wrap gap-4 opacity-0 animate-slideLeft [animation-delay:0.9s]">
               <div className="px-4 py-2 rounded-full text-white">
                 ⭐ 4.9 Rating
               </div>
@@ -181,6 +188,7 @@ const Home = () => {
                 🔒 Safe checkout
               </div>
             </div>
+
           </div>
         </div>
       </section>
