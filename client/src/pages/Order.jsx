@@ -8,7 +8,7 @@ const Order = () => {
   const [loading, setLoading] = useState(true);
 
   // ─────────────────────────────────────────────
-  // STATUS UI HELPERS
+  // STATUS HELPERS
   // ─────────────────────────────────────────────
   const getStatusIcon = (status) => {
     switch (status) {
@@ -63,8 +63,7 @@ const Order = () => {
       const safeOrders = ordersData.map((order) => ({
         ...order,
         items: Array.isArray(order.items) ? order.items : [],
-        createdAt:
-          order.createdAt || new Date().toISOString(),
+        createdAt: order.createdAt || new Date().toISOString(),
         totalPrice: order.totalPrice || 0,
         status: order.status || "Pending",
       }));
@@ -83,36 +82,41 @@ const Order = () => {
   };
 
   // ─────────────────────────────────────────────
-  // PAYMENT RETURN HANDLER (CHAPA)
+  // INIT (HANDLE PAYMENT + FETCH ORDERS)
   // ─────────────────────────────────────────────
   useEffect(() => {
-    const handlePaymentReturn = async () => {
+    const init = async () => {
       try {
         const params = new URLSearchParams(window.location.search);
         const txRef = params.get("tx_ref");
 
+        // ───── PAYMENT RETURN HANDLING ─────
         if (txRef) {
-          // 1. verify payment
-          await verifyChapaPayment(txRef);
+          try {
+            const res = await verifyChapaPayment(txRef);
+            const status = res?.data?.chapaStatus;
 
-          // 2. clear cart (backup safety)
-          await clearCart();
+            if (status === "success") {
+              await clearCart();
+            }
 
-          // 3. clean URL
-          window.history.replaceState({}, "", "/orders");
+            // clean URL
+            window.history.replaceState({}, "", "/orders");
+          } catch (err) {
+            console.error("Payment verify failed:", err);
+            window.history.replaceState({}, "", "/orders");
+          }
         }
 
-        // 4. load orders
+        // fetch orders always
         await fetchOrders();
       } catch (err) {
-        console.error("Payment verification error:", err);
-
-        // still load orders even if verification fails
+        console.error(err);
         await fetchOrders();
       }
     };
 
-    handlePaymentReturn();
+    init();
   }, []);
 
   // ─────────────────────────────────────────────
@@ -123,7 +127,10 @@ const Order = () => {
       await deleteOrder(id);
       setOrders((prev) => prev.filter((o) => o._id !== id));
     } catch (err) {
-      alert("Delete failed: " + (err.response?.data?.message || err.message));
+      alert(
+        "Delete failed: " +
+        (err.response?.data?.message || err.message)
+      );
     }
   };
 
@@ -134,8 +141,10 @@ const Order = () => {
     return (
       <div className="p-4 max-w-3xl mx-auto min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
-          <p className="mt-4 text-amber-500 text-lg">Loading orders...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
+          <p className="mt-4 text-amber-500 text-lg">
+            Loading orders...
+          </p>
         </div>
       </div>
     );
@@ -152,7 +161,6 @@ const Order = () => {
 
       {orders.length === 0 ? (
         <div className="text-center py-16 bg-amber-50 rounded-lg">
-          <div className="text-6xl mb-4"></div>
           <h3 className="text-xl font-semibold">No orders yet</h3>
           <p className="text-amber-600">
             Your order history will appear here
