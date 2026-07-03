@@ -12,7 +12,7 @@ import {
 import { AuthContext } from "../contexts/authcontext.jsx";
 
 const HERO_IMAGE_URL =
-  "https://res.cloudinary.com/ddntf1cdt/image/upload/v1783117227/Gemini_Generated_Image_70ndnn70ndnn70nd_crqt6r.png";
+  "https://res.cloudinary.com/ddntf1cdt/image/upload/v1783119172/Screenshot_from_2026-07-04_01-50-23_uhbdqh.png";
 
 
 const Home = () => {
@@ -195,37 +195,34 @@ const Home = () => {
 
       {/* ───────────────── HERO ───────────────── */}
       <section
-        className="relative min-h-screen bg-fit bg-center overflow-hidden animate-zoomHero"
+        className="relative min-h-screen overflow-hidden animate-zoomHero bg-no-repeat"
         style={{
           backgroundImage: `url(${HERO_IMAGE_URL})`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
+          backgroundPosition: "right center",
+          backgroundSize: "contain",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20" />
-
-        {/* blur effects */}
-        <div className="hidden md:block absolute top-20 right-20 w-80 h-80 bg-[#dd804f]/20 blur-3xl rounded-full animate-pulse" />
-        <div className="hidden md:block absolute bottom-20 right-40 w-96 h-96 bg-orange-400/10 blur-3xl rounded-full animate-pulse" />
+        {/* Left-only overlay (not full width) */}
+        <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
 
         <div className="relative z-10 min-h-screen flex items-center px-4 sm:px-6 md:px-20">
+          {/* moved 30px toward center */}
+          <div className="max-w-xl ml-[50px] md:ml-[90px]">
 
-          <div className="max-w-xl">
-
-            {/* TITLE (animation restored) */}
-            <h1 className="text-5xl sm:text-6xl md:text-[7.5rem] font-black leading-none mb-6 opacity-0 animate-slideLeft">
+            {/* TITLE */}
+            <h1 className="text-5xl sm:text-6xl md:text-[8.5rem] font-black leading-none mb-6 animate-slideLeft">
               <span className="text-white">Adu</span>
               <span className="text-[#dd804f]">Food</span>
             </h1>
 
             {/* DESCRIPTION */}
-            <p className="text-white text-base md:text-xl mb-8 opacity-0 animate-slideLeft [animation-delay:0.3s]">
+            <p className="text-white text-base md:text-xl mb-8 animate-slideLeft [animation-delay:0.3s]">
               Experience authentic Ethiopian cuisine and international favorites,
               delivered fresh and hot to your doorstep.
             </p>
 
             {/* BUTTONS */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-8 opacity-0 animate-slideLeft [animation-delay:0.6s]">
+            <div className="flex flex-col sm:flex-row gap-4 mb-8 animate-slideLeft [animation-delay:0.6s]">
               <button
                 onClick={scrollToMenu}
                 className="bg-[#dd804f] px-6 py-3 md:px-8 md:py-4 rounded-full text-white font-semibold hover:scale-105 transition"
@@ -240,12 +237,12 @@ const Home = () => {
                 Browse Menu
               </button>
             </div>
-            <br /><br />
+
             {/* STATS */}
-            <div className="flex flex-wrap gap-3 text-white opacity-0 animate-slideLeft [animation-delay:0.9s]">
-              <div className="">⭐ 4.9 Rating</div>&nbsp; &nbsp;
-              <div className="">🚚 30 min delivery</div>&nbsp; &nbsp;
-              <div className="">🔒 Safe checkout</div>&nbsp; &nbsp;
+            <div className="flex flex-wrap gap-6 text-white animate-slideLeft [animation-delay:0.9s]">
+              <div>⭐ 4.9 Rating</div>
+              <div>🚚 30 min delivery</div>
+              <div>🔒 Safe checkout</div>
             </div>
 
           </div>
