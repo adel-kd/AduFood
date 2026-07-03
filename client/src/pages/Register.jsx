@@ -30,7 +30,7 @@ export default function Register() {
     }
   }
 
-  
+
   const inputStyle = {
     background: '#181818',
     color: '#fff',
@@ -115,7 +115,7 @@ export default function Register() {
                 />
               </div>
             </div>
-
+            <p className="text-gray-600 mt-3 text-center text-sm">By clicking create account you are agreeing to our<Link to='/terms' className='text-[#dd804f] hover:text-[#c9723c]'>Terms and conditions</Link> and <Link to='/privacy' className='text-[#dd804f] hover:text-[#c9723c]'>Privacy policy</Link> </p>
             <button
               type="submit"
               disabled={loading}

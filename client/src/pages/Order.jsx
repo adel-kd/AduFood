@@ -152,7 +152,7 @@ const Order = () => {
 
       {orders.length === 0 ? (
         <div className="text-center py-16 bg-amber-50 rounded-lg">
-          <div className="text-6xl mb-4">📦</div>
+          <div className="text-6xl mb-4"></div>
           <h3 className="text-xl font-semibold">No orders yet</h3>
           <p className="text-amber-600">
             Your order history will appear here

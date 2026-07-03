@@ -79,12 +79,12 @@ export default function Favorites() {
     return (
       <div className="max-w-6xl mx-auto">
         <div className="text-center py-16">
-          <div className="text-6xl mb-4">❤️</div>
+          <div className="text-6xl mb-4"></div>
           <h2 className="text-3xl font-display font-bold text-gray-900 mb-4">No favorites yet</h2>
-          <p className="text-gray-600 mb-8">Start adding your favorite foods to see them here!</p>
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+          <p className="text-orange-500 mb-8">Start adding your favorite foods to see them here!</p>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-black px-6 py-3 rounded-xl font-medium transition-colors"
           >
             <span>🍽️</span>
             Browse Menu
@@ -98,7 +98,7 @@ export default function Favorites() {
     <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-        <h1 className="text-2xl font-bold mb-6" style={{ color: '#dd804f' }}>My Favorites</h1>
+          <h1 className="text-2xl font-bold mb-6" style={{ color: '#dd804f' }}>My Favorites</h1>
           <p className="text-gray-600 mt-2">{favorites.length} favorite items</p>
         </div>
         <div className="flex items-center gap-2 text-primary-500">
@@ -112,13 +112,13 @@ export default function Favorites() {
           <div key={food._id} className="bg-white rounded-xl shadow-ethiopian overflow-hidden hover:shadow-ethiopian-lg transition-all duration-300 group">
             <div className="relative">
               <Link to={`/food/${food._id}`}>
-                <img 
-                  src={food.image || '/api/placeholder/300/200'} 
+                <img
+                  src={food.image || '/api/placeholder/300/200'}
                   alt={food.name}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </Link>
-              
+
               {/* Category Badge */}
               <div className="absolute top-3 left-3">
                 <span className="bg-primary-500 text-white px-2 py-1 rounded-full text-xs font-medium">
@@ -141,7 +141,7 @@ export default function Favorites() {
                   {food.name}
                 </h3>
               </Link>
-              
+
               <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                 {food.description}
               </p>
@@ -164,7 +164,7 @@ export default function Favorites() {
                   </span>
                   <span className="text-sm text-gray-600">ETB</span>
                 </div>
-                
+
                 <Link
                   to={`/food/${food._id}`}
                   className="bg-primary-500 hover:bg-primary-600 text-black px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"

@@ -1,15 +1,17 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: { port: 3000 },
-  resolve: { alias: { '@': '/src' } },
-  // Add this for proper routing in production
-  build: {
-    outDir: 'dist',
+  server: {
+    port: 3000,
   },
-  // Optional: Set base path if deploying to subdirectory
-  base: process.env.NODE_ENV === 'production' ? '/' : '/'
-})
+  resolve: {
+    alias: {
+      "@": "/src",
+    },
+  },
+  build: {
+    outDir: "dist",
+  },
+});
