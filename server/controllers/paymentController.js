@@ -106,13 +106,13 @@ export const initializePaymentHandler = async (req, res) => {
       process.env.BACKEND_URL || "http://localhost:5000";
 
     const frontendUrl =
-      process.env.FRONTEND_URL || "http://localhost:5173";
+      process.env.FRONTEND_URL;
 
     const chapaPayload = {
       amount: total.toString(),
       currency: "ETB",
       email: finalEmail,
-      first_name: firstName,
+      first_name: firstNam,
       last_name: lastName,
       tx_ref: txRef,
 
