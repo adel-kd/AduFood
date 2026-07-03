@@ -34,13 +34,11 @@ const foodSchema = new mongoose.Schema(
     description: String,
     image: String,
 
-    // ✅ Add category (optional but useful for filters)
     category: {
       type: String,
       default: 'Uncategorized',
     },
 
-    // ✅ Add review/rating support
     reviews: [reviewSchema],
     rating: {
       type: Number,
@@ -57,6 +55,12 @@ const foodSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// ✅ Indexes — prevents full collection scans
+// Text index on name for keyword search; category for filter queries
+foodSchema.index({ name: 'text' });
+foodSchema.index({ category: 1 });
+foodSchema.index({ rating: -1 }); // for top-rated sort
 
 const Food = mongoose.model('Food', foodSchema);
 export default Food;

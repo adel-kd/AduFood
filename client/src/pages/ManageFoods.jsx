@@ -113,17 +113,17 @@ export default function ManageFoods() {
   const formatPrice = (price) => `${price} ETB`
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-amber-500 mb-2">Manage Foods</h1>
-            <p className="text-gray-300">Add, edit, or delete food items in your menu</p>
+            <h1 className="text-3xl font-bold text-[#dd804f] mb-2">Manage Foods</h1>
+            <p className="text-gray-600">Add, edit, or delete food items in your menu</p>
           </div>
           <Link
             to="/admin/food/new"
-            className="mt-4 sm:mt-0 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-amber-500/25"
+            className="mt-4 sm:mt-0 px-6 py-3 bg-[#dd804f] hover:bg-[#c9723c] text-white font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 shadow-sm"
           >
             <span className="text-lg">➕</span>
             Add New Food
@@ -131,28 +131,28 @@ export default function ManageFoods() {
         </div>
 
         {/* Search and Filter */}
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-700 shadow-xl">
+        <div className="bg-white rounded-2xl p-6 mb-8 border border-gray-200 shadow-sm">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-amber-500 text-lg">🔍</span>
+                <span className="text-[#dd804f] text-lg">🔍</span>
               </div>
               <input
                 type="text"
                 placeholder="Search foods by name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-gray-900 border-2 border-gray-700 rounded-xl focus:outline-none focus:border-amber-500 text-white placeholder-gray-400 transition-colors"
+                className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#dd804f] focus:border-transparent text-gray-900 placeholder-gray-400 transition-colors"
               />
             </div>
             <div className="relative w-full sm:w-64">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-amber-500 text-lg">📋</span>
+                <span className="text-[#dd804f] text-lg">📋</span>
               </div>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-gray-900 border-2 border-gray-700 rounded-xl focus:outline-none focus:border-amber-500 text-white appearance-none transition-colors"
+                className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#dd804f] focus:border-transparent text-gray-900 appearance-none transition-colors"
               >
                 <option value="">All Categories</option>
                 {categories.map((category, index) => (
@@ -188,11 +188,11 @@ export default function ManageFoods() {
               color: 'purple' 
             }
           ].map((stat, index) => (
-            <div key={index} className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 shadow-lg">
+            <div key={index} className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">{stat.title}</p>
-                  <p className="text-2xl font-bold text-white">{stat.value}</p>
+                  <p className="text-gray-500 text-sm">{stat.title}</p>
+                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                 </div>
                 <span className="text-3xl">{stat.icon}</span>
               </div>
@@ -204,27 +204,27 @@ export default function ManageFoods() {
         <div className="space-y-4">
           {loading ? (
             <div className="text-center py-16">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
-              <p className="mt-4 text-lg text-amber-500">Loading foods...</p>
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#dd804f]"></div>
+              <p className="mt-4 text-lg text-[#dd804f]">Loading foods...</p>
             </div>
           ) : foods.length > 0 ? (
             foods.map((food) => (
-              <div key={food._id} className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700 shadow-lg hover:shadow-amber-500/10 transition-all duration-200">
+              <div key={food._id} className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
                 {/* Food Header */}
-                <div className="p-6 bg-gray-900/50">
+                <div className="p-6 bg-gray-50">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <span className="text-2xl">{getFoodIcon(food.category?.name || food.category)}</span>
-                        <h3 className="text-xl font-semibold text-white">{food.name}</h3>
+                        <h3 className="text-xl font-semibold text-gray-900">{food.name}</h3>
                       </div>
-                      <p className="text-gray-400 text-sm mb-2 line-clamp-2">{food.description}</p>
+                      <p className="text-gray-600 text-sm mb-2 line-clamp-2">{food.description}</p>
                     </div>
                     <div className="flex items-center gap-4">
                       <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(food.category)}`}>
                         {food.category?.name || food.category || 'Uncategorized'}
                       </span>
-                      <span className="text-xl font-bold text-amber-500">
+                      <span className="text-xl font-bold text-[#dd804f]">
                         {formatPrice(food.price)}
                       </span>
                     </div>
@@ -238,26 +238,26 @@ export default function ManageFoods() {
                       <img
                         src={food.image || '/api/placeholder/80/80'}
                         alt={food.name}
-                        className="w-16 h-16 object-cover rounded-lg border-2 border-gray-700"
+                        className="w-16 h-16 object-cover rounded-lg border border-gray-200"
                       />
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <div className="flex">{renderStars(Math.floor(food.rating || 0))}</div>
-                          <span className="text-sm font-medium text-white">{food.rating || 0}/5</span>
+                          <span className="text-sm font-medium text-gray-900">{food.rating || 0}/5</span>
                         </div>
-                        <span className="text-sm text-gray-400">{food.numReviews || 0} reviews</span>
+                        <span className="text-sm text-gray-500">{food.numReviews || 0} reviews</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <Link
                         to={`/admin/food/${food._id}`}
-                        className="px-4 py-2 bg-gray-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium rounded-lg transition-colors"
                       >
                         Edit
                       </Link>
                       <button
                         onClick={() => handleDelete(food._id, food.name)}
-                        className="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-lg transition-colors"
+                        className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors"
                       >
                         Delete
                       </button>
@@ -267,10 +267,10 @@ export default function ManageFoods() {
               </div>
             ))
           ) : (
-            <div className="text-center py-16 bg-gray-800/50 rounded-2xl border border-gray-700">
+            <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
               <div className="text-6xl mb-4">🍽️</div>
-              <h3 className="text-xl font-semibold text-amber-500 mb-2">No foods found</h3>
-              <p className="text-gray-400">Try adjusting your search or add a new food item</p>
+              <h3 className="text-xl font-semibold text-[#dd804f] mb-2">No foods found</h3>
+              <p className="text-gray-500">Try adjusting your search or add a new food item</p>
             </div>
           )}
         </div>

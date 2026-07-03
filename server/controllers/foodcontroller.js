@@ -3,7 +3,7 @@ import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 
 // @desc    Get all categories
-// @route   GET /api/categories
+// @route   GET /api/foods/categories
 // @access  Public
 export const getCategories = asyncHandler(async (req, res) => {
   const categories = await Food.distinct('category');
@@ -14,26 +14,39 @@ export const getCategories = asyncHandler(async (req, res) => {
 // @route   GET /api/foods
 // @access  Public
 export const getFoods = asyncHandler(async (req, res) => {
-  const pageSize = 100;
-  const page = Number(req.query.pageNumber) || 1;
 
-  const keyword = req.query.keyword
-    ? { name: { $regex: req.query.keyword, $options: 'i' } }
-    : {};
+  const pageSize = Math.min(50, Number(req.query.pageSize) || 20);
+  const page = Math.max(1, Number(req.query.pageNumber) || 1);
 
-  // This should be an empty object when no category is specified
-  const category = req.query.category
-    ? { category: req.query.category }
-    : {};
+  let filter = {};
 
-  const filter = { ...keyword, ...category };
+  // TEMP FIX: use regex instead of $text until indexes are cleaned
+  if (req.query.keyword) {
+    filter.name = {
+      $regex: req.query.keyword,
+      $options: "i",
+    };
+  }
+
+  if (req.query.category) {
+    filter.category = req.query.category;
+  }
+
 
   const count = await Food.countDocuments(filter);
-  const foods = await Food.find(filter)
-    .limit(pageSize)
-    .skip(pageSize * (page - 1));
 
-  res.json({ foods, page, pages: Math.ceil(count / pageSize) });
+  const foods = await Food.find(filter)
+    .select("-reviews")
+    .limit(pageSize)
+    .skip(pageSize * (page - 1))
+    .lean();
+
+
+  return res.json({
+    foods,
+    page,
+    pages: Math.ceil(count / pageSize),
+  });
 });
 
 // @desc    Get single food by ID
@@ -47,6 +60,8 @@ export const getFoodById = asyncHandler(async (req, res) => {
     throw new Error('Invalid food ID');
   }
 
+  // Full document including reviews — intentionally no .lean() here
+  // so embedded subdoc methods work if needed
   const food = await Food.findById(id);
   if (food) {
     res.json(food);
@@ -67,14 +82,7 @@ export const createFood = asyncHandler(async (req, res) => {
     throw new Error('Name, price, description, and category are required');
   }
 
-  const food = new Food({
-    name,
-    price,
-    description,
-    image,
-    category,
-  });
-
+  const food = new Food({ name, price, description, image, category });
   const createdFood = await food.save();
   res.status(201).json(createdFood);
 });
@@ -119,13 +127,12 @@ export const deleteFood = asyncHandler(async (req, res) => {
     throw new Error('Invalid food ID');
   }
 
-  const food = await Food.findById(id);
+  const food = await Food.findByIdAndDelete(id);
   if (!food) {
     res.status(404);
     throw new Error('Food not found');
   }
 
-  await Food.findByIdAndDelete(id);
   res.json({ message: 'Food removed successfully' });
 });
 
@@ -246,6 +253,10 @@ export const deleteReview = asyncHandler(async (req, res) => {
 // @route   GET /api/foods/top
 // @access  Public
 export const getTopFoods = asyncHandler(async (req, res) => {
-  const foods = await Food.find({}).sort({ rating: -1 }).limit(5);
+  const foods = await Food.find({})
+    .select('-reviews') // ✅ no reviews on list endpoint
+    .sort({ rating: -1 })
+    .limit(5)
+    .lean();
   res.json({ foods });
 });

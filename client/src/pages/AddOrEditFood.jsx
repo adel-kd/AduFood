@@ -138,7 +138,7 @@ export default function AddOrEditFood() {
         <h1 className="text-3xl font-display font-bold" style={{ color: '#dd804f' }}>
           {isEdit ? 'Edit Food Item' : 'Add New Food Item'}
         </h1>
-        <p className="mt-2" style={{ color: '#fff' }}>
+        <p className="mt-2" style={{ color: '#6b7280' }}>
           {isEdit
             ? 'Update the food item details'
             : 'Create a new food item for your menu'}
@@ -259,16 +259,16 @@ export default function AddOrEditFood() {
 
         {form.name && (
           <div className="bg-transparent rounded-xl shadow-none p-0">
-            <h2 className="text-xl font-semibold mb-4" style={{ color: '#fff' }}>Preview</h2>
+            <h2 className="text-xl font-semibold mb-4" style={{ color: '#374151' }}>Preview</h2>
             <div className="max-w-sm">
               <div
               
-                className="bg-gray-800 rounded-xl shadow-adu overflow-hidden transition-transform duration-300 group border border-gray-700 cursor-pointer relative"
+                className="bg-white rounded-xl shadow-sm overflow-hidden transition-transform duration-300 group border border-gray-200 cursor-pointer relative"
                 style={{ minHeight: 0 }}
               >
                 <div className="relative">
                   {imageError || !form.image ? (
-                    <div className="w-full h-48 bg-gray-700 flex items-center justify-center">
+                    <div className="w-full h-48 bg-gray-100 flex items-center justify-center">
                       <div className="text-center">
                         <div className="text-4xl mb-2">🍽️</div>
                         <p className="text-gray-400 text-sm">Image not available</p>
@@ -284,7 +284,7 @@ export default function AddOrEditFood() {
                   )}
 
                   <div className="absolute top-3 left-3">
-                    <span className="bg-primary-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                    <span className="bg-[#dd804f] text-white px-3 py-1 rounded-full text-xs font-medium">
                       {form.category || 'Food'}
                     </span>
                   </div>
@@ -292,29 +292,29 @@ export default function AddOrEditFood() {
                 </div>
 
                 <div className="p-4">
-                  <h3 className="font-display font-semibold text-lg text-white mb-2 group-hover:text-primary-400 transition-colors">
+                  <h3 className="font-display font-semibold text-lg text-gray-900 mb-2 group-hover:text-[#dd804f] transition-colors">
                     {form.name}
                   </h3>
-                  <p className="text-gray-300 text-sm mb-3 line-clamp-2">
+                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                     {form.description}
                   </p>
                   <div className="flex items-center gap-2 mb-3">
                     <div className="flex">
                       {renderStars(0)}
                     </div>
-                    <span className="text-sm text-gray-400">
+                    <span className="text-sm text-gray-500">
                       (0 reviews)
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
-                      <span className="text-2xl font-bold text-primary-400">
+                      <span className="text-2xl font-bold text-[#dd804f]">
                         {form.price || 0}
                       </span>
-                      <span className="text-sm text-gray-400">ETB</span>
+                      <span className="text-sm text-gray-500">ETB</span>
                     </div>
                     <button
-                      className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                      className="bg-[#dd804f] hover:bg-[#c9723c] text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
                       type="button"
                       tabIndex={-1}
                       disabled

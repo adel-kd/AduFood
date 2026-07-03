@@ -38,13 +38,13 @@ export default function Navbar() {
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <nav className="bg-gray-800/95 backdrop-blur border-b border-gray-700">
+    <nav className="bg-white/95 backdrop-blur border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-        
+
           <div className="flex items-center gap-3">
             <button
-              className="sm:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:bg-primary-500/10 hover:text-primary-400"
+              className="sm:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-gray-100 hover:text-[#dd804f]"
               aria-label="Toggle menu"
               onClick={() => setOpen((v) => !v)}
             >
@@ -60,7 +60,7 @@ export default function Navbar() {
             <NavLink
               to="/"
               className={({ isActive }) =>
-                `${linkBase} ${isActive ? activeClass : "text-gray-300"}`
+                `${linkBase} ${isActive ? activeClass : "text-gray-600"}`
               }
             >
               <Home className="inline w-4 h-4 mr-1" /> Home
@@ -70,7 +70,7 @@ export default function Navbar() {
                 <NavLink
                   to="/cart"
                   className={({ isActive }) =>
-                    `${linkBase} ${isActive ? activeClass : "text-gray-300"}`
+                    `${linkBase} ${isActive ? activeClass : "text-gray-600"}`
                   }
                 >
                   <ShoppingCart className="inline w-4 h-4 mr-1" /> Cart
@@ -83,7 +83,7 @@ export default function Navbar() {
                 <NavLink
                   to="/favorites"
                   className={({ isActive }) =>
-                    `${linkBase} ${isActive ? activeClass : "text-gray-300"}`
+                    `${linkBase} ${isActive ? activeClass : "text-gray-600"}`
                   }
                 >
                   <Heart className="inline w-4 h-4 mr-1" /> Favorites
@@ -91,7 +91,7 @@ export default function Navbar() {
                 <NavLink
                   to="/orders"
                   className={({ isActive }) =>
-                    `${linkBase} ${isActive ? activeClass : "text-gray-300"}`
+                    `${linkBase} ${isActive ? activeClass : "text-gray-600"}`
                   }
                 >
                   <Package className="inline w-4 h-4 mr-1" /> Orders
@@ -100,7 +100,7 @@ export default function Navbar() {
                   <NavLink
                     to="/admin"
                     className={({ isActive }) =>
-                      `${linkBase} ${isActive ? activeClass : "text-gray-300"}`
+                      `${linkBase} ${isActive ? activeClass : "text-gray-600"}`
                     }
                   >
                     <Settings className="inline w-4 h-4 mr-1" /> Admin
@@ -116,19 +116,19 @@ export default function Navbar() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen((v) => !v)}
-                  className="flex items-center gap-2 text-gray-300 hover:text-white transition px-3 py-2 rounded-md"
+                  className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition px-3 py-2 rounded-md"
                   aria-haspopup="true"
                   aria-expanded={dropdownOpen}
                 >
                   <User size={20} />
-                  <span className="text-sm text-gray-300">Hi, {user.name || user.email}</span>
+                  <span className="text-sm text-gray-600">Hi, {user.name || user.email}</span>
                   <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
                 </button>
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-44 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-50 py-1">
+                  <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-md shadow-lg z-50 py-1">
                     <Link
                       to="/profile"
-                      className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-primary-500/10 hover:text-primary-400 transition-colors text-sm"
+                      className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-[#dd804f] transition-colors text-sm"
                       onClick={() => setDropdownOpen(false)}
                     >
                       <User size={16} /> Profile
@@ -138,7 +138,7 @@ export default function Navbar() {
                         setDropdownOpen(false);
                         logout();
                       }}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-left text-gray-300 hover:bg-primary-500/10 hover:text-primary-400 transition-colors text-sm"
+                      className="w-full flex items-center gap-2 px-4 py-2 text-left text-gray-600 hover:bg-gray-100 hover:text-[#dd804f] transition-colors text-sm"
                     >
                       <LogOut className="w-4 h-4" /> Logout
                     </button>
@@ -150,7 +150,7 @@ export default function Navbar() {
                 <NavLink
                   to="/login"
                   className={({ isActive }) =>
-                    `${linkBase} ${isActive ? activeClass : "text-gray-300"}`
+                    `${linkBase} ${isActive ? activeClass : "text-gray-600"}`
                   }
                 >
                   Login
@@ -158,7 +158,7 @@ export default function Navbar() {
                 <NavLink
                   to="/register"
                   className={({ isActive }) =>
-                    `${linkBase} ${isActive ? activeClass : "text-gray-300"}`
+                    `${linkBase} ${isActive ? activeClass : "text-gray-600"}`
                   }
                 >
                   Register
@@ -171,12 +171,12 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="sm:hidden border-t border-gray-700 px-4 py-3 space-y-2 bg-gray-800">
+        <div className="sm:hidden border-t border-gray-200 px-4 py-3 space-y-2 bg-white">
           <NavLink
             to="/"
             onClick={() => setOpen(false)}
             className={({ isActive }) =>
-              `${linkBase} block w-full ${isActive ? activeClass : "text-gray-300"}`
+              `${linkBase} block w-full ${isActive ? activeClass : "text-gray-600"}`
             }
           >
             <Home className="inline w-4 h-4 mr-1" /> Home
@@ -187,7 +187,7 @@ export default function Navbar() {
                 to="/cart"
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
-                  `${linkBase} block w-full ${isActive ? activeClass : "text-gray-300"}`
+                  `${linkBase} block w-full ${isActive ? activeClass : "text-gray-600"}`
                 }
               >
                 <ShoppingCart className="inline w-4 h-4 mr-1" /> Cart
@@ -201,7 +201,7 @@ export default function Navbar() {
                 to="/favorites"
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
-                  `${linkBase} block w-full ${isActive ? activeClass : "text-gray-300"}`
+                  `${linkBase} block w-full ${isActive ? activeClass : "text-gray-600"}`
                 }
               >
                 <Heart className="inline w-4 h-4 mr-1" /> Favorites
@@ -210,7 +210,7 @@ export default function Navbar() {
                 to="/orders"
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
-                  `${linkBase} block w-full ${isActive ? activeClass : "text-gray-300"}`
+                  `${linkBase} block w-full ${isActive ? activeClass : "text-gray-600"}`
                 }
               >
                 <Package className="inline w-4 h-4 mr-1" /> Orders
@@ -220,14 +220,14 @@ export default function Navbar() {
                   to="/admin"
                   onClick={() => setOpen(false)}
                   className={({ isActive }) =>
-                    `${linkBase} block w-full ${isActive ? activeClass : "text-gray-300"}`
+                    `${linkBase} block w-full ${isActive ? activeClass : "text-gray-600"}`
                   }
                 >
                   <Settings className="inline w-4 h-4 mr-1" /> Admin
                 </NavLink>
               )}
               {/* Mobile: Profile and Logout in dropdown style */}
-              <div className="border-t border-gray-700 pt-2 mt-2">
+              <div className="border-t border-gray-200 pt-2 mt-2">
                 <NavLink
                   to="/profile"
                   onClick={() => setOpen(false)}
@@ -240,7 +240,7 @@ export default function Navbar() {
                     setOpen(false);
                     logout();
                   }}
-                  className={`${linkBase} block w-full text-left bg-primary-500 text-white hover:bg-primary-600 flex items-center gap-1 mt-1`}
+                  className={`${linkBase} block w-full text-left bg-[#dd804f] text-white hover:bg-[#c9723c] flex items-center gap-1 mt-1`}
                 >
                   <LogOut className="w-4 h-4" /> Logout
                 </button>
@@ -252,7 +252,7 @@ export default function Navbar() {
                 to="/login"
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
-                  `${linkBase} block w-full ${isActive ? activeClass : "text-gray-300"}`
+                  `${linkBase} block w-full ${isActive ? activeClass : "text-gray-600"}`
                 }
               >
                 Login
@@ -261,7 +261,7 @@ export default function Navbar() {
                 to="/register"
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
-                  `${linkBase} block w-full ${isActive ? activeClass : "text-gray-300"}`
+                  `${linkBase} block w-full ${isActive ? activeClass : "text-gray-600"}`
                 }
               >
                 Register

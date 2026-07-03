@@ -17,8 +17,19 @@ import { CartProvider } from './contexts/cartcontext.jsx';
 import OrdersManagement from './pages/OrdersManagment.jsx';
 import AddOrEditFood from './pages/AddOrEditFood.jsx';
 import PaymentPage from './pages/PaymentPage.jsx';
-// import PaymentResult from './pages/PaymentResult.jsx';
+import Menu from './pages/Menu.jsx';
 import ProfilePage from './pages/ProfilePage';
+import Support from './pages/Support.jsx';
+import HelpCenter from './pages/HelpCenter.jsx';
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
+import TermsOfService from './pages/TermsOfService.jsx';
+import FAQ from './pages/FAQ.jsx';
+import About from './pages/About.jsx';
+import Contact from './pages/Contact.jsx';
+
+
+
+
 
 function App() {
   return (
@@ -30,6 +41,14 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/food/:id" element={<FoodDetail />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/help" element={<HelpCenter />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/faq" element={<FAQ />} />
 
             {/* Protected Routes */}
             <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
@@ -44,9 +63,6 @@ function App() {
             <Route path="/admin/analytics" element={<ProtectedRoute adminRequired><Analytics /></ProtectedRoute>} />
             <Route path="/admin/orders" element={<ProtectedRoute adminRequired><OrdersManagement /></ProtectedRoute>} />
             <Route path="/admin/food/:id?" element={<ProtectedRoute adminRequired><AddOrEditFood /></ProtectedRoute>} />
-
-            {/* Checkout Success */}
-            {/* <Route path="/checkout" element={< PaymentResult />} /> */}
           </Routes>
         </Layout>
       </CartProvider>

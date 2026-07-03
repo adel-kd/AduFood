@@ -15,5 +15,6 @@ router.get('/', protect, getCart); // GET /api/cart
 router.post('/', protect, addToCart); // POST /api/cart
 router.delete('/:foodId', protect, removeFromCart); // DELETE /api/cart/:foodId
 router.delete('/', protect, clearCart); // DELETE /api/cart
+router.put("/clear", protect, clearCart);
 
 export default router;

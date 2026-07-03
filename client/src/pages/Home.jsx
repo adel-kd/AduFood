@@ -1,27 +1,99 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { listFoods } from "../api/food";
 import FoodCard from "../components/FoodCard";
-import { Search } from "lucide-react";
+import BounceCards from "../components/BounceCards";
+import {
+  Search,
+  Star,
+  Clock,
+  ShieldCheck,
+  Flame,
+} from "lucide-react";
+import { AuthContext } from "../contexts/authcontext.jsx";
+
+const HERO_IMAGE_URL =
+  "https://res.cloudinary.com/ddntf1cdt/image/upload/v1783021601/image.png_202607022235_zmaj7w.jpg";
 
 const Home = () => {
+  const { user } = useContext(AuthContext);
+
   const [foods, setFoods] = useState([]);
   const [keyword, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [testimonialText, setTestimonialText] = useState("");
+  const [testimonialSubmitted, setTestimonialSubmitted] = useState(false);
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
 
   const menuRef = useRef(null);
+
+  const categories = [
+    {
+      key: "burger",
+      label: "Burger",
+      img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400",
+    },
+    {
+      key: "pizza",
+      label: "Pizza",
+      img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400",
+    },
+    {
+      key: "ethiopian",
+      label: "Ethiopian",
+      img: "https://i.pinimg.com/736x/8c/1e/84/8c1e84cc35c2e58d567677224fbaa9ee.jpg",
+    },
+    {
+      key: "drinks",
+      label: "Drinks",
+      img: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400",
+    },
+    {
+      key: "dessert",
+      label: "Dessert",
+      img: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400",
+    },
+  ];
+
+  const testimonials = [
+    {
+      name: "Selam T.",
+      quote:
+        "Order landed hot, fast, and exactly as pictured. Adu Food is my Friday-night default now.",
+    },
+    {
+      name: "Markos B.",
+      quote:
+        "The Ethiopian combo platter converted me. Portion size and spice level were both spot on.",
+    },
+    {
+      name: "Hana G.",
+      quote:
+        "Clean checkout, live tracking, and the driver actually called when he arrived.",
+    },
+  ];
+
+  const categoryTransforms = [
+    "rotate(-12deg) translate(-260px)",
+    "rotate(-6deg) translate(-130px)",
+    "rotate(0deg) translate(0px)",
+    "rotate(6deg) translate(130px)",
+    "rotate(12deg) translate(260px)",
+  ];
 
   const fetchFoods = async () => {
     try {
       setLoading(true);
+
       const res = await listFoods({
         keyword,
         category: category === "all" ? undefined : category,
       });
+
       setFoods(res.data.foods);
-      setLoading(false);
     } catch (err) {
       console.error("Error fetching foods:", err);
+    } finally {
       setLoading(false);
     }
   };
@@ -31,192 +103,276 @@ const Home = () => {
   }, [keyword, category]);
 
   const scrollToMenu = () => {
-    if (menuRef.current) {
-      menuRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    menuRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
   };
 
-  // ShinyText component
-  const ShinyText = ({ text, disabled = false, speed = 6, className = '' }) => {
-    const animationDuration = `${speed}s`;
-    return (
-      <span
-        className={`text-transparent bg-clip-text inline-block ${disabled ? '' : 'animate-shine'} ${className}`}
-        style={{
-          backgroundImage:
-            'linear-gradient(120deg, rgba(236, 148, 32, 0.85) 30%, #dd804f 80%, rgb(243, 187, 114) 70%)',
-          backgroundSize: '200% 100%',
-          WebkitBackgroundClip: 'text',
-          animationDuration: animationDuration,
-          fontWeight: 'bold',
-        }}
-      >
-        {text}
-      </span>
-    );
+  const goToCategory = (cat) => {
+    setCategory(cat);
+    scrollToMenu();
+  };
+
+  const handleTestimonialSubmit = (e) => {
+    e.preventDefault();
+    setTestimonialSubmitted(true);
+
+    setTimeout(() => {
+      setTestimonialSubmitted(false);
+      setTestimonialText("");
+    }, 3000);
   };
 
   return (
-    <div className="relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Hero Section */}
-        <section className="relative rounded-2xl overflow-hidden mb-8 md:mb-12 mt-4">
-          {/* Hero background */}
-          <div
-            className="absolute inset-0 h-64 md:h-96 bg-cover bg-center"
-            style={{
-              backgroundImage:
-                "url('https://plus.unsplash.com/premium_photo-1695297516698-fd7a320a55e5?w=800&auto=format&fit=crop&q=60')",
-            }}
-          />
-          {/* Dark overlay */}
-          <div className="absolute inset-0 h-64 md:h-96 bg-gradient-to-b from-black/70 via-black/40 to-transparent" />
-          
-          {/* Hero content */}
-          <div className="relative flex flex-col justify-center items-center h-64 md:h-96 text-center px-4 py-8 md:py-16">
-            {/* Mobile view */}
-            <div className="flex flex-col items-center w-full md:hidden">
-              {/* Logo */}
-              <div className="flex items-center justify-center mb-3">
-                <span className="relative inline-block">
-                  <span className="absolute animate-pulse -top-2 -left-2 w-14 h-14 rounded-full bg-[#dd804f]/30 blur-lg"></span>
-                  <span className="inline-block text-5xl animate-bounce" style={{ filter: "drop-shadow(0 0 8px #dd804f88)" }}>
-             
-                    <img src="/images/logoicon.png" alt="logo" className="w-16 h-16 pt-2" />
-                  </span>
-                </span>
-              </div>
-              <h1 className="text-3xl font-display font-extrabold mb-5 drop-shadow-lg">
-                <span className="text-white">Welcome to</span>&nbsp;
-                <ShinyText text="Adu Food" className="whitespace-nowrap" />
-              </h1>
-              <div className="flex flex-col gap-2 w-full px-">
-                <button
-                  onClick={scrollToMenu}
-                  className="bg-[#dd804f] hover:bg-[#c9723c] text-white font-semibold px-5 py-2 rounded-xl border-2 border-[#ec9420] hover:border-[#c9723c] transition duration-300 shadow-md"
-                >
-                  Order Now
-                </button>
-                <button
-                  onClick={scrollToMenu}
-                  className=" bg-white/95 hover:bg-white text-gray-900 font-semibold px-4 py-2 rounded-xl border-2 border-[#ec9420] transition duration-300 shadow-md"
-                >
-                  Browse Menu
-                </button>
-              </div>
-            </div>
-            {/* Desktop/Tablet view */}
-            <div className="hidden md:flex flex-col justify-center items-center h-full w-full">
-              {/* AnimatedPlate component */}
-              <div className="flex items-center justify-center mb-4 md:mb-6">
-                <span className="relative inline-block">
-                  <span className="absolute animate-pulse -top-2 -left-2 w-16 h-16 rounded-full bg-[#dd804f]/30 blur-lg"></span>
-                  <span className="inline-block text-6xl animate-bounce" style={{ filter: "drop-shadow(0 0 8px #dd804f88)" }}>
-                    <img src="/images/logoicon.png" alt="logo" className="w-30 h-20 pt-5" />
-                  </span>
-                </span>
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold mb-4 md:mb-6 drop-shadow-lg">
-                <span className="text-white">Welcome to</span>&nbsp;
-                <ShinyText text="Adu Food" className="whitespace-nowrap" />
-              </h1>
-              <p className="text-lg md:text-xl lg:text-2xl mb-6 md:mb-8 max-w-3xl text-gray-200 px-2">
-                Experience authentic Ethiopian cuisine and international favorites, delivered fresh to your door.
-              </p>
-              {/* Buttons */}
-              <div className="flex justify-center gap-4 flex-wrap mt-2 md:mt-4 mb-8 md:mb-0">
-                <button
-                  onClick={scrollToMenu}
-                  className="bg-[#dd804f] hover:bg-[#c9723c] text-white font-semibold px-6 py-3 rounded-xl border-2 border-[#ec9420] hover:border-[#c9723c] transition transform hover:scale-105 duration-300 shadow-md"
-                >
-                  Order Now
-                </button>
-                <button
-                  onClick={scrollToMenu}
-                  className="bg-white/95 hover:bg-white text-gray-900 font-semibold px-6 py-3 rounded-xl border-2 border-[#ec9420] transition transform hover:scale-105 duration-300 shadow-md"
-                >
-                  Browse Menu
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* SEARCH & FILTER */}
-        <section
-          ref={menuRef}
-          className="bg-gray-800/70 rounded-xl shadow-lg p-4 md:p-6 mb-10 border border-gray-700 relative z-10 mt-8 md:mt-12"
-        >
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search Bar */}
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5 md:h-6 md:w-6" />
-              <input
-                type="text"
-                placeholder="Search for your favorite food..."
-                value={keyword}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full p-3 md:p-4 pl-11 md:pl-12 border-2 border-gray-700 rounded-xl focus:outline-none focus:border-[#dd804f] focus:ring-2 focus:ring-[#dd804f]/30 text-base md:text-lg bg-gray-900 text-white placeholder-gray-400 transition"
-              />
-            </div>
-
-            {/* Category Filter */}
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="p-3 md:p-4 pr-10 border-2 border-gray-700 rounded-xl focus:outline-none focus:border-[#dd804f] focus:ring-2 focus:ring-[#dd804f]/30 text-base md:text-lg min-w-[180px] md:min-w-[200px] bg-gray-900 text-white transition appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBzdHJva2U9IiAjeHh4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBvbHlsaW5lIHBvaW50cz0iNiA5IDEyIDE1IDE4IDkiPjwvcG9seWxpbmU+PC9zdmc+')] bg-[length:16px_16px] bg-no-repeat bg-[center_right_1rem]"
-            >
-              <option value="all">All Categories</option>
-              <option value="burger">🍔 Burger</option>
-              <option value="pizza">🍕 Pizza</option>
-              <option value="ethiopian">🇪🇹 Ethiopian</option>
-              <option value="drinks">🥤 Drinks</option>
-              <option value="dessert">🍰 Dessert</option>
-            </select>
-          </div>
-        </section>
-
-        {/* Results */}
-        {loading ? (
-          <div className="text-center py-20">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#dd804f]"></div>
-            <p className="mt-4 text-gray-300 text-lg">Loading delicious foods...</p>
-          </div>
-        ) : !Array.isArray(foods) || foods.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-6xl mb-4">🍽️</div>
-            <h3 className="text-2xl font-semibold text-gray-100 mb-2">No food found</h3>
-            <p className="text-gray-400">Try adjusting your search or browse all categories</p>
-          </div>
-        ) : (
-          <>
-            <div className="flex flex-col md:flex-row items-center justify-between mb-8">
-              <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-2 md:mb-0">
-                {keyword ? `Search results for "${keyword}"` : "Our Menu"}
-              </h2>
-              <span className="text-gray-400 text-sm md:text-base">{foods.length} items found</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-10">
-              {foods.map((food) => (
-                <FoodCard key={food._id} food={food} />
-              ))}
-            </div>
-          </>
-        )}
+    <div className="w-full bg-white">
+      {/* Announcement */}
+      <div className="w-full bg-[#1F1B18] text-white text-center py-2 text-sm">
+        Free delivery on your first order — Use code ADUFIRST
       </div>
 
-      {/* Shine animation CSS */}
-      <style>{`
-        @keyframes shine {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-        .animate-shine {
-          animation: shine 5s linear infinite;
-        }
-      `}</style>
+      {/* HERO */}
+      <section
+        className="relative min-h-screen bg-cover bg-center overflow-hidden animate-[zoomHero_10s_ease-in-out_infinite_alternate]"
+        style={{ backgroundImage: `url(${HERO_IMAGE_URL})` }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
+
+        <div className="absolute top-20 right-20 w-80 h-80 bg-[#dd804f]/20 blur-3xl rounded-full" />
+        <div className="absolute bottom-20 right-40 w-96 h-96 bg-orange-400/10 blur-3xl rounded-full" />
+
+        <div className="relative z-10 min-h-screen flex items-center px-6 md:px-20">
+          <div className="max-w-xl">
+            <h1 className="text-[4rem] md:text-[7.5rem] font-black leading-none mb-6">
+              <span className="text-white">Adu</span>
+              <span className="text-[#dd804f]">Food</span>
+            </h1>
+
+            <p className="text-white text-lg md:text-xl mb-8 leading-relaxed">
+              Experience authentic Ethiopian cuisine and international favorites,
+              delivered fresh and hot to your doorstep.
+            </p>
+
+            <div className="flex gap-4 mb-8">
+              <button
+                onClick={scrollToMenu}
+                className="bg-[#dd804f] text-white px-8 py-4 rounded-full font-semibold hover:scale-110 hover:shadow-xl active:scale-95 transition-all duration-300"
+              >
+                Order Now
+              </button>
+
+              <button
+                onClick={scrollToMenu}
+                className="bg-white/20 backdrop-blur-md border border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-black hover:scale-110 active:scale-95 transition-all duration-300"
+              >
+                Browse Menu
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-4">
+              <div className="px-4 py-2 rounded-full text-white">
+                ⭐ 4.9 Rating
+              </div>
+
+              <div className="px-4 py-2 rounded-full text-white">
+                🚚 30 min delivery
+              </div>
+
+              <div className="px-4 py-2 rounded-full text-white">
+                🔒 Safe checkout
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CATEGORY BOUNCE */}
+      <section className="overflow-hidden">
+        <div className="text-center mb-14">
+          <h2 className="text-4xl font-bold animate-pulse pt-20">
+            Popular Categories
+          </h2>
+        </div>
+
+        <div className="flex justify-center">
+          <BounceCards
+            items={categories}
+            containerWidth={1100}
+            containerHeight={380}
+            animationDelay={0.2}
+            animationStagger={0.1}
+            transformStyles={categoryTransforms}
+            onCategoryClick={goToCategory}
+          />
+        </div>
+      </section>
+
+      {/* SEARCH + MENU */}
+      <section ref={menuRef} className="max-w-7xl mx-auto px-6 mb-16">
+        <div className="flex flex-col md:flex-row gap-4 mb-10">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-4 text-gray-400" />
+
+            <input
+              type="text"
+              value={keyword}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search foods..."
+              className="w-full pl-12 p-4 border rounded-xl"
+            />
+          </div>
+
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="p-4 border rounded-xl pr-4"
+          >
+            <option value="all">All Categories</option>
+            {categories.map((cat) => (
+              <option key={cat.key} value={cat.key}>
+                {cat.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {loading ? (
+          <div className="grid md:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse bg-gray-100 rounded-xl h-72"
+              />
+            ))}
+          </div>
+        ) : foods.length === 0 ? (
+          <div className="text-center py-20 text-gray-500">
+            No foods found.
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-4 gap-6">
+            {foods.map((food) => (
+              <FoodCard key={food._id} food={food} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* FEATURES */}
+      <section className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto px-6 mb-20">
+        {[
+          { icon: <Clock />, title: "Fast delivery" },
+          { icon: <Flame />, title: "Fresh daily" },
+          { icon: <ShieldCheck />, title: "Secure checkout" },
+        ].map((item) => (
+          <div
+            key={item.title}
+            className="bg-gray-50 rounded-xl p-8 text-center hover:shadow-lg transition-all duration-300"
+          >
+            <div className="flex justify-center mb-4 text-[#dd804f]">
+              {item.icon}
+            </div>
+
+            <h3 className="font-bold text-xl">{item.title}</h3>
+          </div>
+        ))}
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="max-w-7xl mx-auto px-6 mb-20">
+        <h2 className="text-3xl font-bold text-center mb-10">
+          What customers are saying
+        </h2>
+
+        <div className="grid md:grid-cols-4 gap-6">
+          {testimonials.map((t) => (
+            <div
+              key={t.name}
+              className="bg-white border rounded-xl p-6 shadow-sm"
+            >
+              <div className="flex mb-4">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    className="fill-yellow-400 text-yellow-400 w-4 h-4"
+                  />
+                ))}
+              </div>
+
+              <p className="text-gray-600 mb-4">"{t.quote}"</p>
+
+              <h4 className="font-bold">{t.name}</h4>
+            </div>
+          ))}
+
+          <div className="bg-[#dd804f]/5 border-2 border-dashed border-[#dd804f]/30 rounded-xl p-6">
+            {testimonialSubmitted ? (
+              <p className="text-green-600 font-medium">
+                Thanks for your feedback!
+              </p>
+            ) : user ? (
+              <form onSubmit={handleTestimonialSubmit}>
+                <textarea
+                  rows={4}
+                  value={testimonialText}
+                  onChange={(e) => setTestimonialText(e.target.value)}
+                  className="w-full border rounded-lg p-3 mb-3"
+                  placeholder="Write your experience..."
+                />
+
+                <button className="w-full bg-[#dd804f] text-white py-3 rounded-lg hover:opacity-90 transition">
+                  Submit
+                </button>
+              </form>
+            ) : (
+              <a
+                href="/login"
+                className="bg-[#dd804f] text-white px-4 py-3 rounded-lg inline-block"
+              >
+                Login to review
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* NEWSLETTER */}
+      <section className="max-w-4xl mx-auto mb-20 bg-gray-900 rounded-2xl p-10 text-center text-white">
+        <h2 className="text-3xl font-bold mb-3">
+          Get 15% off your next order
+        </h2>
+
+        <p className="text-gray-300 mb-6">
+          Join our list for exclusive offers.
+        </p>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setNewsletterSubmitted(true);
+
+            setTimeout(() => {
+              setNewsletterSubmitted(false);
+            }, 3000);
+          }}
+          className="flex gap-3 max-w-lg mx-auto"
+        >
+          <input
+            type="email"
+            placeholder="you@example.com"
+            className="flex-1 px-4 py-3 rounded-xl text-black"
+          />
+
+          <button className="bg-[#dd804f] px-6 rounded-xl font-semibold hover:scale-105 transition">
+            Notify Me
+          </button>
+        </form>
+
+        {newsletterSubmitted && (
+          <p className="mt-4 text-green-400">🎉 You're subscribed!</p>
+        )}
+      </section>
     </div>
   );
 };
+
 export default Home;

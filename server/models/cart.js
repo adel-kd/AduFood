@@ -29,5 +29,6 @@ const cartSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+// Note: unique:true on the user field above already creates the index in MongoDB.
 const Cart = mongoose.model('Cart', cartSchema);
 export default Cart;

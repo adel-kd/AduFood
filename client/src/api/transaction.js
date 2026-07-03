@@ -1,5 +1,16 @@
-import axios from './axios.js';
+import axios from "./axios.js";
 
-export function initializeTransaction(payload) {
-  return axios.post('/transactions', payload);
+// Initialize payment
+export function initializeChapaPayment(payload) {
+  return axios.post("/payment/initialize", payload);
+}
+
+// Manual verify payment
+export function manualVerifyPayment(txRef) {
+  return axios.get(`/payment/verify/${txRef}`);
+}
+
+// Optional alias (if you use this elsewhere)
+export function verifyChapaPayment(txRef) {
+  return axios.get(`/payment/verify/${txRef}`);
 }

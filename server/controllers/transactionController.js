@@ -1,138 +1,233 @@
-import axios from 'axios';
+import { v4 as uuidv4 } from "uuid";
+import Order from "../models/order.js";
+import Transaction from "../models/Transaction.js";
+import {
+  initializePayment,
+  verifyPayment,
+} from "../service/chapaService.js";
 
-// Initialize transaction
-export const createTransaction = async (req, res) => {
+/**
+ * ─────────────────────────────────────────────
+ * Helper: verify + update order
+ * ─────────────────────────────────────────────
+ */
+const verifyAndUpdateOrder = async (txRef) => {
+  const { status: chapaStatus, data: chapaData } =
+    await verifyPayment(txRef);
+
+  const order = await Order.findOne({ txRef });
+
+  if (!order) {
+    throw new Error(`No order found for txRef: ${txRef}`);
+  }
+
+  if (chapaStatus === "success") {
+    order.status = "Confirmed";
+  } else if (chapaStatus === "failed") {
+    order.status = "Cancelled";
+  }
+
+  if (chapaStatus !== "pending") {
+    await order.save();
+  }
+
+  await Transaction.findOneAndUpdate(
+    { chapaReference: txRef },
+    {
+      status: chapaStatus,
+      chapaVerifiedRef:
+        chapaData?.reference || chapaData?.id || null,
+    }
+  );
+
+  return { order, chapaStatus };
+};
+
+/**
+ * ─────────────────────────────────────────────
+ * Initialize Payment
+ * ─────────────────────────────────────────────
+ */
+export const initializePaymentHandler = async (req, res) => {
   try {
-    const {
-      amount,
-      email,
-      first_name,
-      last_name,
-      phone_number,
-      orderId
-    } = req.body;
+    const { items, phone } = req.body;
 
-    if (!amount || !email || !first_name || !last_name) {
-      return res.status(400).json({ message: 'Missing required fields' });
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: "No order items provided" });
     }
 
-    // Build payload
-    const payload = {
-      amount: String(amount),
-      currency: 'ETB',
-      email,
-      first_name,
-      last_name,
-      ...(phone_number && { phone_number }),
-      tx_ref: orderId,
-      callback_url: `${process.env.BACKEND_URL}/api/transactions/verify/${orderId}`,
-      return_url: `${process.env.FRONTEND_URL}/payment/result?tx_ref=${orderId}`,
+    // total calculation (server-side trust)
+    const calculatedTotalPrice = items.reduce((sum, item) => {
+      return sum + (Number(item.price) || 0) * (Number(item.qty) || 1);
+    }, 0);
+
+    if (calculatedTotalPrice <= 0) {
+      return res.status(400).json({ message: "Invalid payment amount" });
+    }
+
+    // user info
+    const finalEmail = req.user?.email || "guest@adufood.com";
+    const userName = req.user?.name || "Customer User";
+
+    const finalFirstName = userName.split(" ")[0] || "Customer";
+    const finalLastName =
+      userName.split(" ").slice(1).join(" ") || "User";
+
+    const txRef = `ADU-${uuidv4()}`;
+
+    const formattedItems = items.map((item) => ({
+      food: item.food,
+      qty: item.qty || 1,
+      price: item.price || 0,
+    }));
+
+    // Create Order
+    const order = await Order.create({
+      user: req.user._id,
+      items: formattedItems,
+      totalPrice: calculatedTotalPrice,
+      deliveryFee: req.body.deliveryFee || 0,
+      discountAmount: req.body.discountAmount || 0,
+      promoCode: req.body.promoCode || null,
+      status: "Pending",
+      txRef,
+    });
+
+    // Create Transaction
+    await Transaction.create({
+      orderId: order._id,
+      userId: req.user._id,
+      amount: calculatedTotalPrice,
+      currency: "ETB",
+      email: finalEmail,
+      phone: phone || null,
+      chapaReference: txRef,
+      status: "pending",
+    });
+
+    const backendUrl =
+      process.env.BACKEND_URL || "http://localhost:5000";
+
+    const frontendUrl =
+      process.env.FRONTEND_URL || "http://localhost:5173";
+
+    // FULL PAYLOAD BUILT HERE (single source of truth)
+    const chapaPayload = {
+      amount: String(calculatedTotalPrice),
+      currency: "ETB",
+      email: finalEmail,
+      first_name: finalFirstName,
+      last_name: finalLastName,
+      tx_ref: txRef,
+      callback_url: `${backendUrl}/api/payment/callback?tx_ref=${txRef}`,
+      return_url: `${frontendUrl}/payment/result?tx_ref=${txRef}`,
+
       customization: {
-        title: 'Adu Delivery Payment',
-        description: 'Food order checkout'
+        title: "AduFood".slice(0, 16),
+        description: "Checkout",
       },
+
       meta: {
-        order_id: orderId,
-        user_id: req.user?.id || 'guest'
-      }
+        order_id: order._id.toString(),
+        user_id: req.user._id.toString(),
+      },
     };
 
-    const chapaRes = await axios.post(
-      'https://api.chapa.co/v1/transaction/initialize',
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.CHAPA_SECRET_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
+    // Call service
+    const { checkoutUrl } = await initializePayment(chapaPayload);
 
-    if (!chapaRes.data || !chapaRes.data.data?.checkout_url) {
-      return res.status(500).json({ 
-        message: 'Transaction initialization failed', 
-        data: chapaRes.data 
-      });
-    }
+    res.status(201).json({
+      message: "Payment initialized",
+      checkoutUrl,
+      orderId: order._id,
+      txRef,
+    });
+  } catch (err) {
+    console.error("Payment init error:", err.response?.data || err.message);
+
+    res.status(500).json({
+      message: "Failed to initialize payment",
+      error: err.response?.data || err.message,
+    });
+  }
+};
+
+/**
+ * ─────────────────────────────────────────────
+ * Callback
+ * ─────────────────────────────────────────────
+ */
+export const chapaCallbackHandler = async (req, res) => {
+  try {
+    const { tx_ref } = req.query;
+
+    const { chapaStatus, order } =
+      await verifyAndUpdateOrder(tx_ref);
+
+    res.status(200).json({
+      message: "Callback processed",
+      orderId: order._id,
+      status: chapaStatus,
+    });
+  } catch (err) {
+    console.error("Chapa callback error:", err.message);
+
+    res.status(500).json({
+      message: "Callback processing failed",
+      error: err.message,
+    });
+  }
+};
+
+/**
+ * ─────────────────────────────────────────────
+ * Webhook
+ * ─────────────────────────────────────────────
+ */
+export const chapaWebhookHandler = async (req, res) => {
+  try {
+    const txRef =
+      req.body?.tx_ref || req.body?.data?.tx_ref;
+
+    await verifyAndUpdateOrder(txRef);
+
+    res.status(200).json({
+      message: "Webhook processed",
+    });
+  } catch (err) {
+    console.error("Webhook error:", err.message);
+
+    res.status(200).json({
+      message: "Webhook received (failed processing)",
+    });
+  }
+};
+
+/**
+ * ─────────────────────────────────────────────
+ * Manual verify
+ * ─────────────────────────────────────────────
+ */
+export const manualVerifyHandler = async (req, res) => {
+  try {
+    const { txRef } = req.params;
+
+    const { chapaStatus, order } =
+      await verifyAndUpdateOrder(txRef);
 
     res.json({
-      message: 'Transaction initialized successfully',
-      data: chapaRes.data.data
+      message:
+        chapaStatus === "success"
+          ? "Payment verified successfully"
+          : `Payment status: ${chapaStatus}`,
+      orderId: order._id,
+      orderStatus: order.status,
+      chapaStatus,
     });
   } catch (err) {
-    console.error('Chapa API error:', err.response?.data || err.message);
-    res.status(500).json({ 
-      message: 'Failed to create transaction', 
-      error: err.response?.data || err.message 
-    });
-  }
-};
-
-// Verify transaction - called by Chapa callback
-export const verifyTransactionCallback = async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    const { status, tx_ref } = req.body;
-
-    console.log('Callback received:', { orderId, status, tx_ref, body: req.body });
-
-    if (status === 'success' && tx_ref === orderId) {
-      // Update your database here - mark order as paid
-      // await updateOrderStatus(orderId, 'completed');
-      
-      console.log(`Payment successful for order: ${orderId}`);
-      
-      // You can also send email notifications or trigger other actions here
-    } else {
-      console.log(`Payment failed for order: ${orderId}`);
-      // await updateOrderStatus(orderId, 'failed');
-    }
-
-    // Return success response to Chapa
-    res.status(200).json({ message: 'Callback received' });
-  } catch (err) {
-    console.error('Callback error:', err);
-    res.status(500).json({ message: 'Callback processing failed' });
-  }
-};
-
-// Manual transaction verification (for frontend)
-export const verifyTransactionManual = async (req, res) => {
-  try {
-    const { tx_ref } = req.params;
-    
-    if (!tx_ref) {
-      return res.status(400).json({ message: 'Transaction reference is required' });
-    }
-
-    const verifyRes = await axios.get(
-      `https://api.chapa.co/v1/transaction/verify/${tx_ref}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.CHAPA_SECRET_KEY}`
-        }
-      }
-    );
-
-    if (verifyRes.data.status === 'success') {
-      // Update order status in your database
-      // await updateOrderStatus(tx_ref, 'completed');
-      
-      return res.json({
-        message: 'Transaction verified successfully',
-        data: verifyRes.data
-      });
-    } else {
-      return res.status(400).json({
-        message: 'Transaction verification failed',
-        data: verifyRes.data
-      });
-    }
-  } catch (err) {
-    console.error('Verification error:', err.response?.data || err.message);
     res.status(500).json({
-      message: 'Failed to verify transaction',
-      error: err.response?.data || err.message
+      message: "Verification failed",
+      error: err.message,
     });
   }
 };

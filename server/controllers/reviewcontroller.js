@@ -6,12 +6,8 @@ export const createReview = async (req, res) => {
     const { foodId, rating, comment } = req.body;
     const userId = req.user._id;
 
-    // Check if user already has a review for this food
-    const existingReview = await Review.findOne({ food: foodId, user: userId });
-    if (existingReview) {
-      return res.status(400).json({ message: 'You have already reviewed this food' });
-    }
-
+    // Check duplicate is now enforced at DB level by unique index {food, user}
+    // but we still return a friendly error on duplicate key error
     const review = new Review({ food: foodId, user: userId, rating, comment });
     await review.save();
 
@@ -19,6 +15,10 @@ export const createReview = async (req, res) => {
 
     res.status(201).json({ message: 'Review added', review });
   } catch (error) {
+    // MongoDB duplicate key error code
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'You have already reviewed this food' });
+    }
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -70,10 +70,11 @@ export const deleteReview = async (req, res) => {
 export const getFoodReviews = async (req, res) => {
   try {
     const { foodId } = req.params;
-    
+
     const reviews = await Review.find({ food: foodId })
       .populate('user', 'name email')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean(); // ✅ read-only list — lean() for speed
 
     res.status(200).json({ reviews });
   } catch (error) {
@@ -81,22 +82,27 @@ export const getFoodReviews = async (req, res) => {
   }
 };
 
-// Helper function to update food rating
+// ✅ FIX: Single aggregation instead of Review.find() + JS reduce
+//    Before: fetched ALL review documents into memory, then reduced in JS
+//    After:  DB computes count + avg in one aggregation pipeline step
 const updateFoodRating = async (foodId) => {
-  const reviews = await Review.find({ food: foodId });
-  
-  if (reviews.length === 0) {
-    await Food.findByIdAndUpdate(foodId, {
-      rating: 0,
-      numReviews: 0
-    });
-    return;
-  }
+  const agg = await Review.aggregate([
+    { $match: { food: foodId } },
+    {
+      $group: {
+        _id: '$food',
+        avgRating: { $avg: '$rating' },
+        count: { $sum: 1 }
+      }
+    }
+  ]);
 
-  const avgRating = reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length;
-  
-  await Food.findByIdAndUpdate(foodId, {
-    rating: avgRating,
-    numReviews: reviews.length
-  });
+  if (agg.length === 0) {
+    await Food.findByIdAndUpdate(foodId, { rating: 0, numReviews: 0 });
+  } else {
+    await Food.findByIdAndUpdate(foodId, {
+      rating: agg[0].avgRating,
+      numReviews: agg[0].count
+    });
+  }
 };

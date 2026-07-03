@@ -113,7 +113,7 @@ export default function FoodCard({ food }) {
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="bg-gray-800 rounded-xl shadow-adu overflow-hidden group border border-gray-700 cursor-pointer relative"
+      className="bg-white rounded-xl shadow-sm overflow-hidden group cursor-pointer relative"
       style={{
         transition: 'transform 90ms cubic-bezier(0.4,0,0.2,1)'
       }}
@@ -121,7 +121,7 @@ export default function FoodCard({ food }) {
       <div className="relative">
         <Link to={`/food/${food._id}`}>
           {imageError ? (
-            <div className="w-full h-48 bg-gray-700 flex items-center justify-center">
+            <div className="w-full h-48 bg-gray-100 flex items-center justify-center">
               <div className="text-center">
                 <div className="text-4xl mb-2">🍽️</div>
                 <p className="text-gray-400 text-sm">Image not available</p>
@@ -150,7 +150,7 @@ export default function FoodCard({ food }) {
         {/* Favorite Button */}
         <button
           onClick={handleFavorite}
-          className="absolute top-3 right-3 p-2 bg-gray-800/90 rounded-full hover:bg-gray-700/90 transition-colors"
+          className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-sm"
         >
           <span className={`text-lg ${isFavorite ? 'text-red-500' : 'text-gray-400'}`}>
             {isFavorite ? '❤️' : '🤍'}
@@ -160,12 +160,12 @@ export default function FoodCard({ food }) {
 
       <div className="p-4">
         <Link to={`/food/${food._id}`}>
-          <h3 className="font-display font-semibold text-lg text-white mb-2 group-hover:text-primary-400 transition-colors">
+          <h3 className="font-display font-semibold text-lg text-gray-900 mb-2 group-hover:text-[#dd804f] transition-colors">
             {food.name}
           </h3>
         </Link>
         
-        <p className="text-gray-300 text-sm mb-3 line-clamp-2">
+        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
           {food.description}
         </p>
 
@@ -174,7 +174,7 @@ export default function FoodCard({ food }) {
           <div className="flex">
             {renderStars(food.rating || 0)}
           </div>
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-gray-500">
             ({food.numReviews || 0} reviews)
           </span>
         </div>
@@ -188,17 +188,13 @@ export default function FoodCard({ food }) {
             >
               {food.price}
             </span>
-            <span className="text-sm text-gray-400">ETB</span>
+            <span className="text-sm text-gray-500">ETB</span>
           </div>
           
           <button
             onClick={handleAddToCart}
             disabled={isAddingToCart}
-            className="px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-white"
-            style={{ 
-              // backgroundColor: '#dd804f',
-              hover: { backgroundColor: '#c9723c' }
-            }}
+            className="px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-white bg-[#dd804f] hover:bg-[#c9723c]"
           >
             {isAddingToCart ? (
               <>

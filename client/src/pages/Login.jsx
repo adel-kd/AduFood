@@ -26,8 +26,7 @@ export default function Login() {
 
   return (
     <div
-      className="min-h-screen flex items-top justify-center py-12 px-4 sm:px-6 lg:px-8"
-      style={{ background: '' }}
+      className="min-h-screen flex items-top justify-center py-12 px-4 sm:px-6 lg:px-8 bg-white"
     >
       <div className="max-w-md w-full space-y-8">
         {/* Logo only, no brand text */}
@@ -36,34 +35,31 @@ export default function Login() {
         </div>
         <div className="text-center">
           <h2
-            className="text-3xl font-display font-bold"
-            style={{ color: '#fff' }}
+            className="text-3xl font-display font-bold text-gray-900"
           >
             Welcome back
           </h2>
-          <p className="mt-2" style={{ color: '#fff', opacity: 0.8 }}>
+          <p className="mt-2 text-gray-600">
             Sign in to your account to continue
           </p>
         </div>
 
         <form onSubmit={submitHandler} className="mt-8 space-y-6">
           <div
-            className="rounded-xl shadow-adu p-8 border"
-            style={{ background: '#222', borderColor: '#444' }}
+            className="rounded-xl shadow-sm p-8 border border-gray-200 bg-white"
           >
             <div className="space-y-4">
               <div>
-           <div   className="block text-sm font-small mb-2"   style={{ color: '#dd804f' }}>
+           <div   className="block text-sm font-small mb-2 text-[#dd804f]">
            <h3>you wanna check admin side? </h3>
                 <p>
                   email: admin@adufood.com <br />
                   pass:admin123
                 </p>
            </div>
-          
+
                 <label
-                  className="block text-sm font-medium mb-2"
-                  style={{ color: '#fff' }}
+                  className="block text-sm font-medium mb-2 text-gray-900"
                 >
                   Email address
                 </label>
@@ -71,15 +67,7 @@ export default function Login() {
                   type="email"
                   placeholder="you@example.com"
                   required
-                  className="w-full p-3 border rounded-lg focus:outline-none"
-                  style={{
-                    background: '#181818',
-                    color: '#fff',
-                    borderColor: '#444',
-                    outline: 'none',
-                  }}
-                  onFocus={e => (e.target.style.boxShadow = '0 0 0 2px #dd804f')}
-                  onBlur={e => (e.target.style.boxShadow = 'none')}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#dd804f] focus:border-transparent bg-white text-gray-900"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                 />
@@ -87,8 +75,7 @@ export default function Login() {
 
               <div>
                 <label
-                  className="block text-sm font-medium mb-2"
-                  style={{ color: '#fff' }}
+                  className="block text-sm font-medium mb-2 text-gray-900"
                 >
                   Password
                 </label>
@@ -96,15 +83,7 @@ export default function Login() {
                   type="password"
                   placeholder="••••••••"
                   required
-                  className="w-full p-3 border rounded-lg focus:outline-none"
-                  style={{
-                    background: '#181818',
-                    color: '#fff',
-                    borderColor: '#444',
-                    outline: 'none',
-                  }}
-                  onFocus={e => (e.target.style.boxShadow = '0 0 0 2px #dd804f')}
-                  onBlur={e => (e.target.style.boxShadow = 'none')}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#dd804f] focus:border-transparent bg-white text-gray-900"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                 />
@@ -114,13 +93,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-              style={{
-                background: loading ? '#b96a3e' : '#dd804f',
-                color: '#fff',
-                opacity: loading ? 0.7 : 1,
-                cursor: loading ? 'not-allowed' : 'pointer'
-              }}
+              className="w-full mt-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 bg-[#dd804f] hover:bg-[#c9723c] text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -133,12 +106,11 @@ export default function Login() {
             </button>
 
             <div className="mt-6 text-center">
-              <p style={{ color: '#fff' }}>
+              <p className="text-gray-600">
                 Don't have an account?{' '}
                 <Link
                   to="/register"
-                  className="font-medium"
-                  style={{ color: '#dd804f' }}
+                  className="font-medium text-[#dd804f] hover:text-[#c9723c]"
                 >
                   Sign up here
                 </Link>

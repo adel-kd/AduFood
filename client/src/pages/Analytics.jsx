@@ -56,7 +56,7 @@ export default function Analytics() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold" style={{ color: '#dd804f' }}>Analytics Dashboard</h1>
-        <p className="mt-2" style={{ color: '#fff' }}>Comprehensive insights into your ADU Food</p>
+        <p className="mt-2" style={{ color: '#6b7280' }}>Comprehensive insights into your ADU Food</p>
       </div>
 
       {/* Key Metrics */}

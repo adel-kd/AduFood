@@ -65,7 +65,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-display font-bold mb-2" style={{ color: '#dd804f' }}>Admin Dashboard</h1>
-        <p style={{ color: '#fff' }}>Welcome to Adu Food administration panel</p>
+        <p style={{ color: '#6b7280' }}>Welcome to Adu Food administration panel</p>
       </div>
 
       {/* Analytics Cards */}
