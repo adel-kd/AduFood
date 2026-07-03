@@ -109,7 +109,7 @@ export const initializePaymentHandler = async (req, res) => {
       process.env.BACKEND_URL || "http://localhost:5000";
 
     const frontendUrl =
-      process.env.FRONTEND_URL || "http://localhost:5173";
+      process.env.FRONTEND_URL || "http://localhost:3000";
 
     // FULL PAYLOAD BUILT HERE (single source of truth)
     const chapaPayload = {
