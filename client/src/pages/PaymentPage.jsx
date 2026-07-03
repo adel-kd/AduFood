@@ -170,20 +170,44 @@ export default function PaymentPage() {
             <div className="bg-white p-6 rounded-xl shadow">
               <h2 className="font-semibold mb-4">Delivery Address</h2>
 
-              {addresses.map((a) => (
-                <label key={a._id} className="block mb-2 border p-3 rounded">
-                  <input
-                    type="radio"
-                    name="address"
-                    value={a._id}
-                    checked={addressId === a._id}
-                    onChange={(e) => setAddressId(e.target.value)}
-                  />
-                  <span className="ml-2">
-                    {a.city} - {a.phone}
-                  </span>
-                </label>
-              ))}
+              {addresses.length > 0 ? (
+                <>
+                  {addresses.map((a) => (
+                    <label key={a._id} className="block mb-2 border p-3 rounded">
+                      <input
+                        type="radio"
+                        name="address"
+                        value={a._id}
+                        checked={addressId === a._id}
+                        onChange={(e) => setAddressId(e.target.value)}
+                      />
+                      <span className="ml-2">
+                        {a.city} - {a.phone}
+                      </span>
+                    </label>
+                  ))}
+
+                  <button
+                    onClick={() => navigate("/profile")}
+                    className="mt-4 w-full bg-[#dd804f] text-white py-2 rounded-lg hover:bg-[#c9723c] transition"
+                  >
+                    Add New Address
+                  </button>
+                </>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-gray-500 mb-4">
+                    No delivery address found.
+                  </p>
+
+                  <button
+                    onClick={() => navigate("/profile")}
+                    className="w-full bg-[#dd804f] text-white py-2 rounded-lg hover:bg-[#c9723c] transition"
+                  >
+                    Add Address
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* PROMO */}

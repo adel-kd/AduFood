@@ -112,7 +112,7 @@ export const initializePaymentHandler = async (req, res) => {
       amount: total.toString(),
       currency: "ETB",
       email: finalEmail,
-      first_name: firstNam,
+      first_name: firstName,
       last_name: lastName,
       tx_ref: txRef,
 
