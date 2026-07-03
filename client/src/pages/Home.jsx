@@ -81,6 +81,9 @@ const Home = () => {
     "rotate(12deg) translate(260px)",
   ];
 
+  // ─────────────────────────────
+  // FETCH FOODS
+  // ─────────────────────────────
   const fetchFoods = async () => {
     try {
       setLoading(true);
@@ -103,9 +106,7 @@ const Home = () => {
   }, [keyword, category]);
 
   const scrollToMenu = () => {
-    menuRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
+    menuRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const goToCategory = (cat) => {
@@ -124,67 +125,67 @@ const Home = () => {
   };
 
   return (
-    <div className="w-full bg-white">
-      {/* Announcement */}
-      <div className="w-full bg-[#1F1B18] text-white text-center py-2 text-sm">
+    <div className="w-full bg-white overflow-x-hidden">
+
+      {/* ANNOUNCEMENT */}
+      <div className="w-full bg-[#1F1B18] text-white text-center py-2 text-xs sm:text-sm">
         Free delivery on your first order — Use code ADUFIRST
       </div>
 
-      {/* HERO */}
+      {/* ───────────────── HERO ───────────────── */}
       <section
-        className="relative min-h-screen bg-cover bg-center overflow-hidden animate-zoomHero"
-        style={{ backgroundImage: `url(${HERO_IMAGE_URL})` }}
+        className="relative min-h-[85vh] md:min-h-screen bg-cover bg-center overflow-hidden"
+        style={{
+          backgroundImage: `url(${HERO_IMAGE_URL})`,
+          backgroundPosition: "center 30%",
+        }}
       >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20" />
 
-        {/* Blur effects */}
-        <div className="absolute top-20 right-20 w-80 h-80 bg-[#dd804f]/20 blur-3xl rounded-full animate-pulse" />
-        <div className="absolute bottom-20 right-40 w-96 h-96 bg-orange-400/10 blur-3xl rounded-full animate-pulse" />
+        {/* blur effects hidden on mobile */}
+        <div className="hidden md:block absolute top-20 right-20 w-80 h-80 bg-[#dd804f]/20 blur-3xl rounded-full animate-pulse" />
+        <div className="hidden md:block absolute bottom-20 right-40 w-96 h-96 bg-orange-400/10 blur-3xl rounded-full animate-pulse" />
 
-        <div className="relative z-10 min-h-screen flex items-center px-6 md:px-20">
-          <div className="max-w-xl">
+        <div className="relative z-10 flex items-center min-h-[85vh] md:min-h-screen px-4 sm:px-6 md:px-20">
+          <div className="max-w-xl w-full">
 
-            {/* Title */}
-            <h1 className="text-[4rem] md:text-[7.5rem] font-black leading-none mb-6 opacity-0 animate-slideLeft">
-              <span className="text-white">Adu</span>
-              <span className="text-[#dd804f]">Food</span>
+            {/* TITLE */}
+            <h1 className="text-5xl sm:text-6xl md:text-[7rem] font-black leading-none mb-6 text-white">
+              Adu<span className="text-[#dd804f]">Food</span>
             </h1>
 
-            {/* Description */}
-            <p className="text-white text-lg md:text-xl mb-8 leading-relaxed opacity-0 animate-slideLeft [animation-delay:0.3s]">
+            {/* DESCRIPTION */}
+            <p className="text-white text-sm sm:text-base md:text-xl mb-8 leading-relaxed">
               Experience authentic Ethiopian cuisine and international favorites,
               delivered fresh and hot to your doorstep.
             </p>
 
-            {/* Buttons */}
-            <div className="flex gap-4 mb-8 opacity-0 animate-slideLeft [animation-delay:0.6s]">
+            {/* BUTTONS */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <button
                 onClick={scrollToMenu}
-                className="bg-[#dd804f] text-white px-8 py-4 rounded-full font-semibold hover:scale-110 hover:shadow-xl active:scale-95 transition-all duration-300"
+                className="bg-[#dd804f] text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold hover:scale-105 transition"
               >
                 Order Now
               </button>
 
               <button
                 onClick={scrollToMenu}
-                className="bg-white/20 backdrop-blur-md border border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-black hover:scale-110 active:scale-95 transition-all duration-300"
+                className="bg-white/20 backdrop-blur-md border border-white text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold hover:bg-white hover:text-black transition"
               >
                 Browse Menu
               </button>
             </div>
 
-            {/* Stats */}
-            <div className="flex flex-wrap gap-4 opacity-0 animate-slideLeft [animation-delay:0.9s]">
-              <div className="px-4 py-2 rounded-full text-white">
+            {/* STATS */}
+            <div className="flex flex-wrap gap-3 text-xs sm:text-sm md:text-base">
+              <div className="px-3 py-2 bg-white/10 rounded-full text-white">
                 ⭐ 4.9 Rating
               </div>
-
-              <div className="px-4 py-2 rounded-full text-white">
+              <div className="px-3 py-2 bg-white/10 rounded-full text-white">
                 🚚 30 min delivery
               </div>
-
-              <div className="px-4 py-2 rounded-full text-white">
+              <div className="px-3 py-2 bg-white/10 rounded-full text-white">
                 🔒 Safe checkout
               </div>
             </div>
@@ -193,15 +194,15 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CATEGORY BOUNCE */}
-      <section className="overflow-hidden">
-        <div className="text-center mb-14">
-          <h2 className="text-4xl font-bold animate-pulse pt-20">
+      {/* ───────────────── CATEGORIES ───────────────── */}
+      <section className="overflow-hidden px-4">
+        <div className="text-center mb-10 md:mb-14">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold pt-10 md:pt-20">
             Popular Categories
           </h2>
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center scale-[0.85] sm:scale-100">
           <BounceCards
             items={categories}
             containerWidth={1100}
@@ -214,14 +215,13 @@ const Home = () => {
         </div>
       </section>
 
-      {/* SEARCH + MENU */}
-      <section ref={menuRef} className="max-w-7xl mx-auto px-6 mb-16">
+      {/* ───────────────── SEARCH + MENU ───────────────── */}
+      <section ref={menuRef} className="max-w-7xl mx-auto px-4 mb-16">
+
         <div className="flex flex-col md:flex-row gap-4 mb-10">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-4 text-gray-400" />
-
             <input
-              type="text"
               value={keyword}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search foods..."
@@ -232,7 +232,7 @@ const Home = () => {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="p-4 border rounded-xl pr-4"
+            className="p-4 border rounded-xl"
           >
             <option value="all">All Categories</option>
             {categories.map((cat) => (
@@ -244,12 +244,9 @@ const Home = () => {
         </div>
 
         {loading ? (
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="animate-pulse bg-gray-100 rounded-xl h-72"
-              />
+              <div key={i} className="animate-pulse bg-gray-100 h-72 rounded-xl" />
             ))}
           </div>
         ) : foods.length === 0 ? (
@@ -257,7 +254,7 @@ const Home = () => {
             No foods found.
           </div>
         ) : (
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {foods.map((food) => (
               <FoodCard key={food._id} food={food} />
             ))}
@@ -265,8 +262,8 @@ const Home = () => {
         )}
       </section>
 
-      {/* FEATURES */}
-      <section className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto px-6 mb-20">
+      {/* ───────────────── FEATURES ───────────────── */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto px-4 mb-20">
         {[
           { icon: <Clock />, title: "Fast delivery" },
           { icon: <Flame />, title: "Fresh daily" },
@@ -274,82 +271,49 @@ const Home = () => {
         ].map((item) => (
           <div
             key={item.title}
-            className="bg-gray-50 rounded-xl p-8 text-center hover:shadow-lg transition-all duration-300"
+            className="bg-gray-50 rounded-xl p-6 md:p-8 text-center"
           >
             <div className="flex justify-center mb-4 text-[#dd804f]">
               {item.icon}
             </div>
-
-            <h3 className="font-bold text-xl">{item.title}</h3>
+            <h3 className="font-bold text-lg md:text-xl">{item.title}</h3>
           </div>
         ))}
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="max-w-7xl mx-auto px-6 mb-20">
-        <h2 className="text-3xl font-bold text-center mb-10">
+      {/* ───────────────── TESTIMONIALS ───────────────── */}
+      <section className="max-w-7xl mx-auto px-4 mb-20">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">
           What customers are saying
         </h2>
 
-        <div className="grid md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {testimonials.map((t) => (
-            <div
-              key={t.name}
-              className="bg-white border rounded-xl p-6 shadow-sm"
-            >
-              <div className="flex mb-4">
+            <div key={t.name} className="border rounded-xl p-6 shadow-sm">
+              <div className="flex mb-3">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
-                    className="fill-yellow-400 text-yellow-400 w-4 h-4"
+                    className="w-4 h-4 fill-yellow-400 text-yellow-400"
                   />
                 ))}
               </div>
 
-              <p className="text-gray-600 mb-4">"{t.quote}"</p>
-
+              <p className="text-gray-600 mb-4 text-sm">"{t.quote}"</p>
               <h4 className="font-bold">{t.name}</h4>
             </div>
           ))}
-
-          <div className="bg-[#dd804f]/5 border-2 border-dashed border-[#dd804f]/30 rounded-xl p-6">
-            {testimonialSubmitted ? (
-              <p className="text-green-600 font-medium">
-                Thanks for your feedback!
-              </p>
-            ) : user ? (
-              <form onSubmit={handleTestimonialSubmit}>
-                <textarea
-                  rows={4}
-                  value={testimonialText}
-                  onChange={(e) => setTestimonialText(e.target.value)}
-                  className="w-full border rounded-lg p-3 mb-3"
-                  placeholder="Write your experience..."
-                />
-
-                <button className="w-full bg-[#dd804f] text-white py-3 rounded-lg hover:opacity-90 transition">
-                  Submit
-                </button>
-              </form>
-            ) : (
-              <a
-                href="/login"
-                className="bg-[#dd804f] text-white px-4 py-3 rounded-lg inline-block"
-              >
-                Login to review
-              </a>
-            )}
-          </div>
         </div>
       </section>
 
-      {/* NEWSLETTER */}
-      <section className="max-w-4xl mx-auto mb-20 bg-gray-900 rounded-2xl p-10 text-center text-white">
-        <h2 className="text-3xl font-bold mb-3">
+      {/* ───────────────── NEWSLETTER ───────────────── */}
+      <section className="max-w-4xl mx-auto mb-20 bg-gray-900 rounded-2xl p-6 md:p-10 text-center text-white">
+
+        <h2 className="text-2xl md:text-3xl font-bold mb-3">
           Get 15% off your next order
         </h2>
 
-        <p className="text-gray-300 mb-6">
+        <p className="text-gray-300 mb-6 text-sm md:text-base">
           Join our list for exclusive offers.
         </p>
 
@@ -357,20 +321,16 @@ const Home = () => {
           onSubmit={(e) => {
             e.preventDefault();
             setNewsletterSubmitted(true);
-
-            setTimeout(() => {
-              setNewsletterSubmitted(false);
-            }, 3000);
+            setTimeout(() => setNewsletterSubmitted(false), 3000);
           }}
-          className="flex gap-3 max-w-lg mx-auto"
+          className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
         >
           <input
             type="email"
             placeholder="you@example.com"
             className="flex-1 px-4 py-3 rounded-xl text-black"
           />
-
-          <button className="bg-[#dd804f] px-6 rounded-xl font-semibold hover:scale-105 transition">
+          <button className="bg-[#dd804f] px-6 py-3 rounded-xl font-semibold">
             Notify Me
           </button>
         </form>
@@ -379,6 +339,7 @@ const Home = () => {
           <p className="mt-4 text-green-400">🎉 You're subscribed!</p>
         )}
       </section>
+
     </div>
   );
 };

@@ -133,7 +133,7 @@ export const initializePaymentHandler = async (req, res) => {
       tx_ref: txRef,
 
       callback_url: `${backendUrl}/api/payment/callback?tx_ref=${txRef}`,
-      return_url: `${frontendUrl}/payment/result?tx_ref=${txRef}`,
+      return_url: `${frontendUrl}/orders?tx_ref=${txRef}`,
 
       customization: {
         title: "AduFood",

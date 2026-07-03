@@ -222,7 +222,7 @@ export default function PaymentPage() {
                 />
                 <button
                   onClick={handleApplyPromo}
-                  className="px-4 py-2 bg-orange-500 text-white rounded"
+                  className="px-4 py-2 bg-[#dd804f] text-white rounded"
                 >
                   Apply
                 </button>
@@ -262,7 +262,7 @@ export default function PaymentPage() {
 
             <button
               onClick={handlePay}
-              className="w-full mt-5 bg-orange-500 text-white py-3 rounded"
+              className="w-full mt-5 bg-[#dd804f] text-white py-3 rounded"
             >
               Pay with Chapa
             </button>
